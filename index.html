@@ -145,41 +145,60 @@
 </div>
 
 <script>
-const weeks = [
-    "17/05/26",
-    "24/05/26",
-    "31/05/26"
+const weeks = ["17/05/26", "24/05/26", "31/05/26"];
+
+// FULL INPUTTED DATA (31/05/26)
+const chartData = [
+    { title: "I Follow Rivers", artist: "Lykke Li", change: 17 },
+    { title: "Vogue", artist: "Madonna", change: 12 },
+    { title: "Church Girl", artist: "Beyoncé", change: 23 },
+    { title: "anthems", artist: "Charli xcx", change: "new" },
+    { title: "Believe", artist: "Cher", change: 1 },
+    { title: "Liquorice", artist: "Azealia Banks", change: 7 },
+    { title: "Rock Music", artist: "Charli xcx", change: "new" },
+    { title: "Flourescent Adolescent", artist: "Arctic Monkeys", change: "new" },
+    { title: "Spring Breakers", artist: "Charli xcx", change: 6 },
+    { title: "Not Allowed", artist: "TV Girl", change: 6 },
+    { title: "Turn it up", artist: "PinkPantheress", change: 8 },
+    { title: "New Tank", artist: "Playboi Carti", change: -2 },
+    { title: "Blue Hair", artist: "TV Girl", change: 3 },
+    { title: "All The Things She Said", artist: "t.A.T.u.", change: -13 },
+    { title: "Playhouse", artist: "Azealia Banks", change: -12 },
+    { title: "Luxury", artist: "Azealia Banks", change: -9 },
+    { title: "#BrooklynBloodPop!", artist: "Syko", change: 9 },
+    { title: "The Sign", artist: "Ace of Base", change: -9 },
+    { title: "no tears left to cry", artist: "Ariana Grande", change: "new" },
+    { title: "Can't Get You Out Of My Head", artist: "Kylie Minogue", change: "new" },
+    { title: "Attracted To You", artist: "PinkPantheress", change: -15 },
+    { title: "Internet baby (interlude)", artist: "PinkPantheress", change: -4 },
+    { title: "hate that I made you love me", artist: "Ariana Grande", change: "new" },
+    { title: "claws", artist: "Charli xcx", change: "new" },
+    { title: "Fentanyl Tester", artist: "JPEGMAFIA", change: -1 },
+    { title: "Don't Stop 'Til You Get Enough", artist: "Michael Jackson", change: -21 },
+    { title: "Back That Up To The Beat", artist: "Madonna", change: -17 },
+    { title: "P.Y.T", artist: "Michael Jackson", change: 0 },
+    { title: "Espresso", artist: "Sabrina Carpenter", change: "new" },
+    { title: "Taking What's Not Yours", artist: "TV Girl", change: -18 },
+    { title: "Talk Talk", artist: "Charli xcx", change: -8 },
+    { title: "Good Luck, Babe!", artist: "Chappell Roan", change: "new" },
+    { title: "pink diamond", artist: "Charli xcx", change: "new" },
+    { title: "BOUNCE", artist: "Charli xcx", change: -21 },
+    { title: "American Boy", artist: "Estelle", change: "new" },
+    { title: "Someone New", artist: "Hozier", change: -14 },
+    { title: "Diet Pepsi", artist: "Addison Rae", change: "new" },
+    { title: "On Sight", artist: "Kanye West", change: -30 },
+    { title: "Icy Colors Change", artist: "Azealia Banks", change: -14 },
+    { title: "Beat It", artist: "Michael Jackson", change: -19 }
 ];
 
-// Example dataset (3 weeks, 40 songs each)
+// use same deterministic data for all weeks (no randomness anywhere)
 const data = {
-    "17/05/26": generateWeek("A"),
-    "24/05/26": generateWeek("B"),
-    "31/05/26": generateWeek("C")
+    "17/05/26": chartData,
+    "24/05/26": chartData,
+    "31/05/26": chartData
 };
 
 let currentWeekIndex = 2;
-
-function generateWeek(tag) {
-    const arr = [];
-    for (let i = 1; i <= 40; i++) {
-        arr.push({
-            title: `Song ${tag}${i}`,
-            artist: `Artist ${i}`,
-            change: randomChange(),
-            cover: "https://via.placeholder.com/50"
-        });
-    }
-    return arr;
-}
-
-function randomChange() {
-    const r = Math.random();
-    if (r < 0.15) return "new";
-    if (r < 0.45) return Math.floor(Math.random() * 4) + 1;
-    if (r < 0.75) return -(Math.floor(Math.random() * 4) + 1);
-    return 0;
-}
 
 function render() {
     const week = weeks[currentWeekIndex];
@@ -215,7 +234,7 @@ function render() {
         row.innerHTML = `
             <div class="rank">${index + 1}</div>
             <div class="cover">
-                <img src="${song.cover}" />
+                <img src="https://via.placeholder.com/50" />
             </div>
             <div class="song">
                 <div class="title">${song.title}</div>
