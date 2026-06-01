@@ -105,34 +105,10 @@ header {
 .up { color: green; }
 .down { color: red; }
 .new { color: blue; }
-
-/* ===== HOME BUTTON ===== */
-.home-btn {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    background: rgba(17,17,17,0.9);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: bold;
-    transition: 0.2s ease;
-    z-index: 999;
-    backdrop-filter: blur(6px);
-}
-
-.home-btn:hover {
-    transform: translateY(-2px);
-    background: rgba(17,17,17,1);
-}
 </style>
 </head>
 
 <body>
-
-<a class="home-btn" href="/">← Home</a>
 
 <header>Rhythm Charts</header>
 
@@ -189,10 +165,83 @@ const week17 = [
 {t:"Hollaback Girl",a:"Gwen Stefani",c:"https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png/250px-Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png"}
 ];
 
-/* (rest of your week24 + week31 + JS stays EXACTLY the same) */
+const week24 = [
+{t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
+{t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
+{t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
+{t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
+{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
+{t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
+{t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
+{t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
+{t:"The Sign",a:"Ace Of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
+{t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
+{t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
+{t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+{t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
+{t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
+{t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
+{t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+{t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
+{t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
+{t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
+{t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
+{t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+{t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
+{t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
+{t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
+{t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
+{t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+{t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+{t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
+{t:"Hacker",a:"Death Grips",c:"https://d1gdi8qinx8x49.cloudfront.net/540x540/83056.jpeg"},
+{t:"Count Contessa",a:"Azealia Banks",c:"https://i.discogs.com/NCiEjx4w9ocQd-prxo1mHFUMCNPzq4pW7Gy8gxwCr0Y/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NjI1/MjM5LTE1Nzg0MTk1/ODEtNjcyMC5qcGVn.jpeg"}
+];
 
-const week24 = [/* unchanged */];
-const week31 = [/* unchanged */];
+const week31 = [
+{t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
+{t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
+{t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
+{t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+{t:"Believe",a:"Cher",c:"https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png"},
+{t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
+{t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
+{t:"Flourescent Adolescent",a:"Arctic Monkeys",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdo3qsXKrhPxXxNmptTprSPHA7hFv4uTRAJw&s"},
+{t:"Spring Breakers",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/61YyY3MzhxL.jpg"},
+{t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+{t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
+{t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
+{t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
+{t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
+{t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
+{t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
+{t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
+{t:"no tears left to cry",a:"Ariana Grande",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPhdlp_irqCyB8oZul2Yryk_TboZ6XwjV7KA&s"},
+{t:"Can't Get You Out Of My Head",a:"Kylie Minogue",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Kylie_Minogue_-_Fever.png/250px-Kylie_Minogue_-_Fever.png"},
+{t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
+{t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
+{t:"hate that I made you love me",a:"Ariana Grande",c:"https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Ariana_Grande_-_Petal.png/250px-Ariana_Grande_-_Petal.png"},
+{t:"claws",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+{t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
+{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
+{t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
+{t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+{t:"Espresso",a:"Sabrina Carpenter",c:"https://upload.wikimedia.org/wikipedia/en/7/71/Espresso_-_Sabrina_Carpenter.png"},
+{t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+{t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
+{t:"Good Luck, Babe!",a:"Chappell Roan",c:"https://upload.wikimedia.org/wikipedia/en/2/2c/Chappell_Roan_-_Good_Luck%2C_Babe%21.png"},
+{t:"pink diamond",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+{t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
+{t:"American Boy",a:"Estelle",c:"https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/American_Boy_UK_Cover.jpg/250px-American_Boy_UK_Cover.jpg"},
+{t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
+{t:"Diet Pepsi",a:"Addison Rae",c:"https://media.pitchfork.com/photos/680911e60c3c7e90ea0cf2b7/master/w_1600%2Cc_limit/Addison-Rae.jpeg"},
+{t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
+{t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
+{t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+{t:"Beg For You",a:"Charli xcx",c:"https://upload.wikimedia.org/wikipedia/en/b/bf/Charli_XCX_-_Beg_For_You_%28feat._Rina_Sawayama%29.jpg"}
+];
+
+/* ========================= */
 
 const data = {
 "17/05/26": week17,
