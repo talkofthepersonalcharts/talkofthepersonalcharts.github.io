@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Personal Charts Archive</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f4f4;
+    }
+
+    header {
+        background: #111;
+        color: white;
+        padding: 18px;
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1100px;
+        margin: 10px auto;
+        padding: 10px;
+    }
+
+    .week-controls button {
+        padding: 8px 12px;
+        border: none;
+        background: #111;
+        color: white;
+        cursor: pointer;
+        margin: 0 5px;
+    }
+
+    .week-controls button:disabled {
+        background: #777;
+        cursor: not-allowed;
+    }
+
+    .date {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 0 auto 40px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .chart-header, .row {
+        display: grid;
+        grid-template-columns: 60px 60px 1fr 140px 120px;
+        align-items: center;
+    }
+
+    .chart-header {
+        padding: 10px;
+        background: #eaeaea;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .row {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        transition: 0.2s;
+    }
+
+    .row:hover {
+        background: #fafafa;
+    }
+
+    .rank {
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .cover img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        background: #ddd;
+    }
+
+    .song {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title {
+        font-weight: bold;
+    }
+
+    .artist {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .streams {
+        text-align: right;
+        font-size: 14px;
+    }
+
+    .movement {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .up { color: green; }
+    .down { color: red; }
+    .new { color: blue; }
+</style>
+</head>
+
+<body>
+
+<header>PERSONAL CHART ARCHIVE</header>
+
+<div class="topbar">
+    <div class="week-controls">
+        <button onclick="changeWeek(-1)" id="prevBtn">← Previous</button>
+        <button onclick="changeWeek(1)" id="nextBtn">Next →</button>
+    </div>
+    <div class="date" id="dateLabel"></div>
+</div>
+
+<div class="container">
+
+    <div class="chart-header">
+        <div>#</div>
+        <div></div>
+        <div>Song</div>
+        <div>Streams</div>
+        <div>Movement</div>
+    </div>
+
+    <div id="chart"></div>
+
+</div>
+
+<script>
+const weeks = [
+    "17/05/26",
+    "24/05/26",
+    "31/05/26"
+];
+
+// Example dataset (3 weeks, 40 songs each)
+// In real use, you can replace with your IRMA model outputs
+const data = {
+    "17/05/26": generateWeek("A"),
+    "24/05/26": generateWeek("B"),
+    "31/05/26": generateWeek("C")
+};
+
+let currentWeekIndex = 2;
+
+function generateWeek(tag) {
+    const arr = [];
+    for (let i = 1; i <= 40; i++) {
+        arr.push({
+            title: `Song ${tag}${i}`,
+            artist: `Artist ${i}`,
+            streams: Math.floor(Math.random() * 100000) + 20000,
+            change: randomChange(),
+            cover: "https://via.placeholder.com/50"
+        });
+    }
+    return arr;
+}
+
+function randomChange() {
+    const r = Math.random();
+    if (r < 0.15) return "new";
+    if (r < 0.45) return Math.floor(Math.random() * 4) + 1;
+    if (r < 0.75) return -(Math.floor(Math.random() * 4) + 1);
+    return 0;
+}
+
+function render() {
+    const week = weeks[currentWeekIndex];
+    document.getElementById("dateLabel").innerText = week;
+
+    document.getElementById("prevBtn").disabled = currentWeekIndex === 0;
+    document.getElementById("nextBtn").disabled = currentWeekIndex === weeks.length - 1;
+
+    const chart = document.getElementById("chart");
+    chart.innerHTML = "";
+
+    data[week].forEach((song, index) => {
+
+        let movementText = "";
+        let movementClass = "movement";
+
+        if (song.change === "new") {
+            movementText = "NEW";
+            movementClass += " new";
+        } else if (song.change > 0) {
+            movementText = "↑ " + song.change;
+            movementClass += " up";
+        } else if (song.change < 0) {
+            movementText = "↓ " + Math.abs(song.change);
+            movementClass += " down";
+        } else {
+            movementText = "—";
+        }
+
+        const row = document.createElement("div");
+        row.className = "row";
+
+        row.innerHTML = `
+            <div class="rank">${index + 1}</div>
+            <div class="cover">
+                <img src="${song.cover}" />
+            </div>
+            <div class="song">
+                <div class="title">${song.title}</div>
+                <div class="artist">${song.artist}</div>
+            </div>
+            <div class="streams">${song.streams.toLocaleString()}</div>
+            <div class="${movementClass}">${movementText}</div>
+        `;
+
+        chart.appendChild(row);
+    });
+}
+
+function changeWeek(dir) {
+    currentWeekIndex += dir;
+    render();
+}
+
+render();
+</script>
+
+</body>
+</html>
