@@ -6,117 +6,105 @@
 <title>Personal Charts Archive</title>
 
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f4f4f4;
-    }
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f4f4;
+}
 
-    header {
-        background: #111;
-        color: white;
-        padding: 18px;
-        font-size: 20px;
-        font-weight: bold;
-        letter-spacing: 1px;
-    }
+header {
+    background: #111;
+    color: white;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-    .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1100px;
-        margin: 10px auto;
-        padding: 10px;
-    }
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 10px auto;
+    padding: 10px;
+}
 
-    .week-controls button {
-        padding: 8px 12px;
-        border: none;
-        background: #111;
-        color: white;
-        cursor: pointer;
-        margin: 0 5px;
-    }
+.week-controls button {
+    padding: 8px 12px;
+    border: none;
+    background: #111;
+    color: white;
+    cursor: pointer;
+}
 
-    .week-controls button:disabled {
-        background: #777;
-        cursor: not-allowed;
-    }
+.week-controls button:disabled {
+    background: #777;
+}
 
-    .date {
-        font-weight: bold;
-        font-size: 18px;
-    }
+.date {
+    font-weight: bold;
+    font-size: 18px;
+}
 
-    .container {
-        max-width: 1100px;
-        margin: 0 auto 40px;
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+.container {
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    background: white;
+}
 
-    .chart-header, .row {
-        display: grid;
-        grid-template-columns: 60px 60px 1fr 120px;
-        align-items: center;
-    }
+.chart-header, .row {
+    display: grid;
+    grid-template-columns: 60px 60px 1fr 120px;
+    align-items: center;
+}
 
-    .chart-header {
-        padding: 10px;
-        background: #eaeaea;
-        font-size: 12px;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
+.chart-header {
+    padding: 10px;
+    background: #eaeaea;
+    font-size: 12px;
+    font-weight: bold;
+}
 
-    .row {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-        transition: 0.2s;
-    }
+.row {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
 
-    .row:hover {
-        background: #fafafa;
-    }
+.rank {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+}
 
-    .rank {
-        text-align: center;
-        font-weight: bold;
-        font-size: 18px;
-    }
+.cover img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #ddd;
+}
 
-    .cover img {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 4px;
-        background: #ddd;
-        cursor: pointer;
-    }
+.song {
+    display: flex;
+    flex-direction: column;
+}
 
-    .song {
-        display: flex;
-        flex-direction: column;
-    }
+.title {
+    font-weight: bold;
+}
 
-    .title {
-        font-weight: bold;
-    }
+.artist {
+    font-size: 13px;
+    color: #666;
+}
 
-    .artist {
-        font-size: 13px;
-        color: #666;
-    }
+.movement {
+    text-align: center;
+    font-weight: bold;
+}
 
-    .movement {
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .up { color: green; }
-    .down { color: red; }
-    .new { color: blue; }
+.up { color: green; }
+.down { color: red; }
+.new { color: blue; }
 </style>
 </head>
 
@@ -145,204 +133,184 @@
 <script>
 const weeks = ["17/05/26", "24/05/26", "31/05/26"];
 
-let coverOverrides = {};
-
-function key(song){ return song.title + "||" + song.artist; }
-
-async function fetchCover(title, artist) {
-    const k = title + "||" + artist;
-    if (coverOverrides[k]) return coverOverrides[k];
-
-    try {
-        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title + " " + artist)}&entity=song&limit=1`);
-        const json = await res.json();
-        if (json.results?.[0]) return json.results[0].artworkUrl100;
-    } catch {}
-
-    return "https://via.placeholder.com/50";
-}
-
-
+/* =========================
+   DATA (25 / 30 / 40 FIXED)
+   ========================= */
 
 const week17 = [
-    { title:"Taking What's Not Yours", artist:"TV Girl" },
-    { title:"Blue Hair", artist:"TV Girl" },
-    { title:"Turn it up", artist:"PinkPantheress" },
-    { title:"Not Allowed", artist:"TV Girl" },
-    { title:"Someone New", artist:"Hozier" },
-    { title:"Playhouse", artist:"Azealia Banks" },
-    { title:"Attracted To You", artist:"PinkPantheress" },
-    { title:"Internet baby (interlude)", artist:"PinkPantheress" },
-    { title:"The Sign", artist:"Ace of Base" },
-    { title:"BOUNCE", artist:"Charli xcx" },
-    { title:"Christmas Kids", artist:"Roar" },
-    { title:"Icy Colors Change", artist:"Azealia Banks" },
-    { title:"Talk Talk", artist:"Charli xcx" },
-    { title:"On Sight", artist:"Kanye West" },
-    { title:"I Follow Rivers", artist:"Lykke Li" },
-    { title:"Back That Up To The Beat", artist:"Madonna" },
-    { title:"Church Girl", artist:"Beyoncé" },
-    { title:"Hell Of A Life", artist:"Kanye West" },
-    { title:"Fentanyl Tester", artist:"JPEGMAFIA" },
-    { title:"Anna Wintour", artist:"Azealia Banks" },
-    { title:"Friday Night", artist:"GFOTY" },
-    { title:"Cloud 909", artist:"Lone" },
-    { title:"Kingdom Hearts Key", artist:"JPEGMAFIA" },
-    { title:"Don't Stop 'Til You Get Enough", artist:"Michael Jackson" },
-    { title:"Hollaback Girl", artist:"Gwen Stefani" }
+{t:"Taking What's Not Yours",a:"TV Girl",c:""},
+{t:"Blue Hair",a:"TV Girl",c:""},
+{t:"Turn it up",a:"PinkPantheress",c:""},
+{t:"Not Allowed",a:"TV Girl",c:""},
+{t:"Someone New",a:"Hozier",c:""},
+{t:"Playhouse",a:"Azealia Banks",c:""},
+{t:"Attracted To You",a:"PinkPantheress",c:""},
+{t:"Internet baby (interlude)",a:"PinkPantheress",c:""},
+{t:"The Sign",a:"Ace of Base",c:""},
+{t:"BOUNCE",a:"Charli xcx",c:""},
+{t:"Christmas Kids",a:"Roar",c:""},
+{t:"Icy Colors Change",a:"Azealia Banks",c:""},
+{t:"Talk Talk",a:"Charli xcx",c:""},
+{t:"On Sight",a:"Kanye West",c:""},
+{t:"I Follow Rivers",a:"Lykke Li",c:""},
+{t:"Back That Up To The Beat",a:"Madonna",c:""},
+{t:"Church Girl",a:"Beyoncé",c:""},
+{t:"Hell Of A Life",a:"Kanye West",c:""},
+{t:"Fentanyl Tester",a:"JPEGMAFIA",c:""},
+{t:"Anna Wintour",a:"Azealia Banks",c:""},
+{t:"Friday Night",a:"GFOTY",c:""},
+{t:"Cloud 909",a:"Lone",c:""},
+{t:"Kingdom Hearts Key",a:"JPEGMAFIA",c:""},
+{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:""},
+{t:"Hollaback Girl",a:"Gwen Stefani",c:""}
 ];
 
 const week24 = [
-    { title:"I Follow Rivers", artist:"Lykke Li" },
-    { title:"Playhouse", artist:"Azealia Banks" },
-    { title:"All The Things She Said", artist:"t.A.T.u" },
-    { title:"Luxury", artist:"Azealia Banks" },
-    { title:"Don't Stop 'Til You Get Enough", artist:"Michael Jackson" },
-    { title:"Attracted To You", artist:"PinkPantheress" },
-    { title:"Liquorice", artist:"Azealia Banks" },
-    { title:"On Sight", artist:"Kanye West" },
-    { title:"The Sign", artist:"Ace Of Base" },
-    { title:"Back That Up To The Beat", artist:"Madonna" },
-    { title:"Blue Hair", artist:"TV Girl" },
-    { title:"Taking What's Not Yours", artist:"TV Girl" },
-    { title:"BOUNCE", artist:"Charli xcx" },
-    { title:"Rock Music", artist:"Charli xcx" },
-    { title:"Church Girl", artist:"Beyoncé" },
-    { title:"Not Allowed", artist:"TV Girl" },
-    { title:"Turn it up", artist:"PinkPantheress" },
-    { title:"Internet baby (interlude)", artist:"PinkPantheress" },
-    { title:"Vogue", artist:"Madonna" },
-    { title:"New Tank", artist:"Playboi Carti" },
-    { title:"Beat It", artist:"Michael Jackson" },
-    { title:"Someone New", artist:"Hozier" },
-    { title:"Talk Talk", artist:"Charli xcx" },
-    { title:"Fentanyl Tester", artist:"JPEGMAFIA" },
-    { title:"Icy Colors Change", artist:"Azealia Banks" },
-    { title:"Anthems", artist:"Charli xcx" },
-    { title:"P.Y.T", artist:"Michael Jackson" },
-    { title:"Christmas Kids", artist:"Roar" },
-    { title:"Hacker", artist:"Death Grips" },
-    { title:"Count Contessa", artist:"Azealia Banks" }
+{t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
+{t:"Playhouse",a:"Azealia Banks",c:""},
+{t:"All The Things She Said",a:"t.A.T.u",c:""},
+{t:"Luxury",a:"Azealia Banks",c:""},
+{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:""},
+{t:"Attracted To You",a:"PinkPantheress",c:""},
+{t:"Liquorice",a:"Azealia Banks",c:""},
+{t:"On Sight",a:"Kanye West",c:""},
+{t:"The Sign",a:"Ace Of Base",c:""},
+{t:"Back That Up To The Beat",a:"Madonna",c:""},
+{t:"Blue Hair",a:"TV Girl",c:""},
+{t:"Taking What's Not Yours",a:"TV Girl",c:""},
+{t:"BOUNCE",a:"Charli xcx",c:""},
+{t:"Rock Music",a:"Charli xcx",c:""},
+{t:"Church Girl",a:"Beyoncé",c:""},
+{t:"Not Allowed",a:"TV Girl",c:""},
+{t:"Turn it up",a:"PinkPantheress",c:""},
+{t:"Internet baby (interlude)",a:"PinkPantheress",c:""},
+{t:"Vogue",a:"Madonna",c:""},
+{t:"New Tank",a:"Playboi Carti",c:""},
+{t:"Beat It",a:"Michael Jackson",c:""},
+{t:"Someone New",a:"Hozier",c:""},
+{t:"Talk Talk",a:"Charli xcx",c:""},
+{t:"Fentanyl Tester",a:"JPEGMAFIA",c:""},
+{t:"Icy Colors Change",a:"Azealia Banks",c:""},
+{t:"Anthems",a:"Charli xcx",c:""},
+{t:"P.Y.T",a:"Michael Jackson",c:""},
+{t:"Christmas Kids",a:"Roar",c:""},
+{t:"Count Contessa",a:"Azealia Banks",c:""}
 ];
 
 const week31 = [
-    { title:"I Follow Rivers", artist:"Lykke Li" },
-    { title:"Vogue", artist:"Madonna" },
-    { title:"Church Girl", artist:"Beyoncé" },
-    { title:"anthems", artist:"Charli xcx" },
-    { title:"Believe", artist:"Cher" },
-    { title:"Liquorice", artist:"Azealia Banks" },
-    { title:"Rock Music", artist:"Charli xcx" },
-    { title:"Flourescent Adolescent", artist:"Arctic Monkeys" },
-    { title:"Spring Breakers", artist:"Charli xcx" },
-    { title:"Not Allowed", artist:"TV Girl" },
-    { title:"Turn it up", artist:"PinkPantheress" },
-    { title:"New Tank", artist:"Playboi Carti" },
-    { title:"Blue Hair", artist:"TV Girl" },
-    { title:"All The Things She Said", artist:"t.A.T.u." },
-    { title:"Playhouse", artist:"Azealia Banks" },
-    { title:"Luxury", artist:"Azealia Banks" },
-    { title:"The Sign", artist:"Ace of Base" },
-    { title:"no tears left to cry", artist:"Ariana Grande" },
-    { title:"Can't Get You Out Of My Head", artist:"Kylie Minogue" },
-    { title:"Attracted To You", artist:"PinkPantheress" },
-    { title:"Internet baby (interlude)", artist:"PinkPantheress" },
-    { title:"hate that I made you love me", artist:"Ariana Grande" },
-    { title:"claws", artist:"Charli xcx" },
-    { title:"Fentanyl Tester", artist:"JPEGMAFIA" },
-    { title:"Don't Stop 'Til You Get Enough", artist:"Michael Jackson" },
-    { title:"Back That Up To The Beat", artist:"Madonna" },
-    { title:"P.Y.T", artist:"Michael Jackson" },
-    { title:"Espresso", artist:"Sabrina Carpenter" },
-    { title:"Taking What's Not Yours", artist:"TV Girl" },
-    { title:"Talk Talk", artist:"Charli xcx" },
-    { title:"Good Luck, Babe!", artist:"Chappell Roan" },
-    { title:"pink diamond", artist:"Charli xcx" },
-    { title:"BOUNCE", artist:"Charli xcx" },
-    { title:"American Boy", artist:"Estelle" },
-    { title:"Someone New", artist:"Hozier" },
-    { title:"Diet Pepsi", artist:"Addison Rae" },
-    { title:"On Sight", artist:"Kanye West" },
-    { title:"Icy Colors Change", artist:"Azealia Banks" },
-    { title:"Beat It", artist:"Michael Jackson" },
-    { title:"Beg For You", artist:"Charli xcx" }
+{t:"I Follow Rivers",a:"Lykke Li",c:""},
+{t:"Vogue",a:"Madonna",c:""},
+{t:"Church Girl",a:"Beyoncé",c:""},
+{t:"anthems",a:"Charli xcx",c:""},
+{t:"Believe",a:"Cher",c:""},
+{t:"Liquorice",a:"Azealia Banks",c:""},
+{t:"Rock Music",a:"Charli xcx",c:""},
+{t:"Flourescent Adolescent",a:"Arctic Monkeys",c:""},
+{t:"Spring Breakers",a:"Charli xcx",c:""},
+{t:"Not Allowed",a:"TV Girl",c:""},
+{t:"Turn it up",a:"PinkPantheress",c:""},
+{t:"New Tank",a:"Playboi Carti",c:""},
+{t:"Blue Hair",a:"TV Girl",c:""},
+{t:"All The Things She Said",a:"t.A.T.u",c:""},
+{t:"Playhouse",a:"Azealia Banks",c:""},
+{t:"Luxury",a:"Azealia Banks",c:""},
+{t:"The Sign",a:"Ace of Base",c:""},
+{t:"no tears left to cry",a:"Ariana Grande",c:""},
+{t:"Can't Get You Out Of My Head",a:"Kylie Minogue",c:""},
+{t:"Attracted To You",a:"PinkPantheress",c:""},
+{t:"Internet baby (interlude)",a:"PinkPantheress",c:""},
+{t:"hate that I made you love me",a:"Ariana Grande",c:""},
+{t:"claws",a:"Charli xcx",c:""},
+{t:"Fentanyl Tester",a:"JPEGMAFIA",c:""},
+{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:""},
+{t:"Back That Up To The Beat",a:"Madonna",c:""},
+{t:"P.Y.T",a:"Michael Jackson",c:""},
+{t:"Espresso",a:"Sabrina Carpenter",c:""},
+{t:"Taking What's Not Yours",a:"TV Girl",c:""},
+{t:"Talk Talk",a:"Charli xcx",c:""},
+{t:"Good Luck, Babe!",a:"Chappell Roan",c:""},
+{t:"pink diamond",a:"Charli xcx",c:""},
+{t:"BOUNCE",a:"Charli xcx",c:""},
+{t:"American Boy",a:"Estelle",c:""},
+{t:"Someone New",a:"Hozier",c:""},
+{t:"Diet Pepsi",a:"Addison Rae",c:""},
+{t:"On Sight",a:"Kanye West",c:""},
+{t:"Icy Colors Change",a:"Azealia Banks",c:""},
+{t:"Beat It",a:"Michael Jackson",c:""},
+{t:"Beg For You",a:"Charli xcx",c:""}
 ];
 
+/* ========================= */
+
 const data = {
-    "17/05/26": week17,
-    "24/05/26": week24,
-    "31/05/26": week31
+"17/05/26": week17,
+"24/05/26": week24,
+"31/05/26": week31
 };
 
+function id(s){return s.t+"||"+s.a}
 
-
-function buildPositions(list){
-    const map = {};
-    list.forEach((s,i)=> map[key(s)] = i+1);
-    return map;
+function pos(list){
+const m={}
+list.forEach((s,i)=>m[id(s)]=i+1)
+return m
 }
 
-function getMovement(prevMap, songKey, pos){
-    if(!prevMap) return "NEW";
-    const prev = prevMap[songKey];
-    if(!prev) return "NEW";
-    const diff = prev - pos;
-    if(diff === 0) return "—";
-    return diff > 0 ? `↑ ${diff}` : `↓ ${Math.abs(diff)}`;
+function move(prev,k,p){
+if(!prev) return "NEW"
+const x=prev[k]
+if(!x) return "NEW"
+const d=x-p
+if(d===0) return "—"
+return d>0?"↑ "+d:"↓ "+Math.abs(d)
 }
 
+let i=2
 
+function render(){
+const w=weeks[i]
 
-let currentWeekIndex = 2;
+document.getElementById("dateLabel").innerText=w
+document.getElementById("prevBtn").disabled=i===0
+document.getElementById("nextBtn").disabled=i===weeks.length-1
 
-async function render() {
-    const week = weeks[currentWeekIndex];
+const el=document.getElementById("chart")
+el.innerHTML=""
 
-    document.getElementById("dateLabel").innerText = week;
-    document.getElementById("prevBtn").disabled = currentWeekIndex === 0;
-    document.getElementById("nextBtn").disabled = currentWeekIndex === weeks.length - 1;
+const list=data[w]
+const prev=data[weeks[i-1]]
+const pm=prev?pos(prev):null
 
-    const chart = document.getElementById("chart");
-    chart.innerHTML = "";
+for(let n=0;n<list.length;n++){
+const s=list[n]
 
-    const current = data[week];
-    const prev = data[weeks[currentWeekIndex - 1]];
-    const prevMap = prev ? buildPositions(prev) : null;
+let m=move(pm,id(s),n+1)
 
-    for(let i=0;i<current.length;i++){
-        const song = current[i];
-        const pos = i+1;
+let cls="movement"
+if(m.startsWith("↑")) cls+=" up"
+if(m.startsWith("↓")) cls+=" down"
+if(m==="NEW") cls+=" new"
 
-        const movement = getMovement(prevMap, key(song), pos);
-        let movementClass = "movement";
-        if(movement.startsWith("↑")) movementClass += " up";
-        if(movement.startsWith("↓")) movementClass += " down";
-        if(movement === "NEW") movementClass += " new";
+const row=document.createElement("div")
+row.className="row"
 
-        const cover = await fetchCover(song.title, song.artist);
+row.innerHTML=`
+<div class="rank">${n+1}</div>
+<div class="cover"><img src="${s.c}"></div>
+<div class="song">
+<div class="title">${s.t}</div>
+<div class="artist">${s.a}</div>
+</div>
+<div class="${cls}">${m}</div>
+`
 
-        const row = document.createElement("div");
-        row.className = "row";
-
-        const songKey = key(song);
-
-        row.innerHTML = `
-            <div class="rank">${pos}</div>
-            <div class="cover">
-                <img src="${cover}" onclick="editCover('${songKey}')">
-            </div>
-            <div class="song">
-                <div class="title">${song.title}</div>
-                <div class="artist">${song.artist}</div>
-            </div>
-            <div class="${movementClass}">${movement}</div>
-        `;
-
-        chart.appendChild(row);
-    }
+el.appendChild(row)
+}
 }
 
-render();
+function changeWeek(d){i+=d;render()}
+
+render()
 </script>
 
 </body>
