@@ -73,6 +73,11 @@
     .row {
         padding: 10px;
         border-bottom: 1px solid #eee;
+        transition: 0.2s;
+    }
+
+    .row:hover {
+        background: #fafafa;
     }
 
     .rank {
@@ -87,6 +92,7 @@
         object-fit: cover;
         border-radius: 4px;
         background: #ddd;
+        cursor: pointer;
     }
 
     .song {
@@ -120,8 +126,8 @@
 
 <div class="topbar">
     <div class="week-controls">
-        <button onclick="shiftWeek(-1)" id="prevBtn">← Previous</button>
-        <button onclick="shiftWeek(1)" id="nextBtn">Next →</button>
+        <button onclick="changeWeek(-1)" id="prevBtn">← Previous</button>
+        <button onclick="changeWeek(1)" id="nextBtn">Next →</button>
     </div>
     <div class="date" id="dateLabel"></div>
 </div>
@@ -139,110 +145,127 @@
 <script>
 const weeks = ["17/05/26", "24/05/26", "31/05/26"];
 
-const covers = { };
+let coverOverrides = {};
+
+function key(song){ return song.title + "||" + song.artist; }
+
+async function fetchCover(title, artist) {
+    const k = title + "||" + artist;
+    if (coverOverrides[k]) return coverOverrides[k];
+
+    try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title + " " + artist)}&entity=song&limit=1`);
+        const json = await res.json();
+        if (json.results?.[0]) return json.results[0].artworkUrl100;
+    } catch {}
+
+    return "https://via.placeholder.com/50";
+}
+
+
 
 const week17 = [
-    { t:"Taking What's Not Yours", a:"TV Girl" },
-    { t:"Blue Hair", a:"TV Girl" },
-    { t:"Turn it up", a:"PinkPantheress" },
-    { t:"Not Allowed", a:"TV Girl" },
-    { t:"Someone New", a:"Hozier" },
-    { t:"Playhouse", a:"Azealia Banks" },
-    { t:"Attracted To You", a:"PinkPantheress" },
-    { t:"Internet baby (interlude)", a:"PinkPantheress" },
-    { t:"The Sign", a:"Ace of Base" },
-    { t:"BOUNCE", a:"Charli xcx" },
-    { t:"Christmas Kids", a:"Roar" },
-    { t:"Icy Colors Change", a:"Azealia Banks" },
-    { t:"Talk Talk", a:"Charli xcx" },
-    { t:"On Sight", a:"Kanye West" },
-    { t:"I Follow Rivers", a:"Lykke Li" },
-    { t:"Back That Up To The Beat", a:"Madonna" },
-    { t:"Church Girl", a:"Beyoncé" },
-    { t:"Hell Of A Life", a:"Kanye West" },
-    { t:"Fentanyl Tester", a:"JPEGMAFIA" },
-    { t:"Anna Wintour", a:"Azealia Banks" },
-    { t:"Friday Night", a:"GFOTY" },
-    { t:"Cloud 909", a:"Lone" },
-    { t:"Kingdom Hearts Key", a:"JPEGMAFIA" },
-    { t:"Don't Stop 'Til You Get Enough", a:"Michael Jackson" },
-    { t:"Hollaback Girl", a:"Gwen Stefani" }
+    { title:"Taking What's Not Yours", artist:"TV Girl" },
+    { title:"Blue Hair", artist:"TV Girl" },
+    { title:"Turn it up", artist:"PinkPantheress" },
+    { title:"Not Allowed", artist:"TV Girl" },
+    { title:"Someone New", artist:"Hozier" },
+    { title:"Playhouse", artist:"Azealia Banks" },
+    { title:"Attracted To You", artist:"PinkPantheress" },
+    { title:"Internet baby (interlude)", artist:"PinkPantheress" },
+    { title:"The Sign", artist:"Ace of Base" },
+    { title:"BOUNCE", artist:"Charli xcx" },
+    { title:"Christmas Kids", artist:"Roar" },
+    { title:"Icy Colors Change", artist:"Azealia Banks" },
+    { title:"Talk Talk", artist:"Charli xcx" },
+    { title:"On Sight", artist:"Kanye West" },
+    { title:"I Follow Rivers", artist:"Lykke Li" },
+    { title:"Back That Up To The Beat", artist:"Madonna" },
+    { title:"Church Girl", artist:"Beyoncé" },
+    { title:"Hell Of A Life", artist:"Kanye West" },
+    { title:"Fentanyl Tester", artist:"JPEGMAFIA" },
+    { title:"Anna Wintour", artist:"Azealia Banks" },
+    { title:"Friday Night", artist:"GFOTY" },
+    { title:"Cloud 909", artist:"Lone" },
+    { title:"Kingdom Hearts Key", artist:"JPEGMAFIA" },
+    { title:"Don't Stop 'Til You Get Enough", artist:"Michael Jackson" },
+    { title:"Hollaback Girl", artist:"Gwen Stefani" }
 ];
 
 const week24 = [
-    { t:"I Follow Rivers", a:"Lykke Li" },
-    { t:"Playhouse", a:"Azealia Banks" },
-    { t:"All The Things She Said", a:"t.A.T.u" },
-    { t:"Luxury", a:"Azealia Banks" },
-    { t:"Don't Stop 'Til You Get Enough", a:"Michael Jackson" },
-    { t:"Attracted To You", a:"PinkPantheress" },
-    { t:"Liquorice", a:"Azealia Banks" },
-    { t:"On Sight", a:"Kanye West" },
-    { t:"The Sign", a:"Ace Of Base" },
-    { t:"Back That Up To The Beat", a:"Madonna" },
-    { t:"Blue Hair", a:"TV Girl" },
-    { t:"Taking What's Not Yours", a:"TV Girl" },
-    { t:"BOUNCE", a:"Charli xcx" },
-    { t:"Rock Music", a:"Charli xcx" },
-    { t:"Church Girl", a:"Beyoncé" },
-    { t:"Not Allowed", a:"TV Girl" },
-    { t:"Turn it up", a:"PinkPantheress" },
-    { t:"Internet baby (interlude)", a:"PinkPantheress" },
-    { t:"Vogue", a:"Madonna" },
-    { t:"New Tank", a:"Playboi Carti" },
-    { t:"Beat It", a:"Michael Jackson" },
-    { t:"Someone New", a:"Hozier" },
-    { t:"Talk Talk", a:"Charli xcx" },
-    { t:"Fentanyl Tester", a:"JPEGMAFIA" },
-    { t:"Icy Colors Change", a:"Azealia Banks" },
-    { t:"Anthems", a:"Charli xcx" },
-    { t:"P.Y.T", a:"Michael Jackson" },
-    { t:"Christmas Kids", a:"Roar" },
-    { t:"Hacker", a:"Death Grips" },
-    { t:"Count Contessa", a:"Azealia Banks" }
+    { title:"I Follow Rivers", artist:"Lykke Li" },
+    { title:"Playhouse", artist:"Azealia Banks" },
+    { title:"All The Things She Said", artist:"t.A.T.u" },
+    { title:"Luxury", artist:"Azealia Banks" },
+    { title:"Don't Stop 'Til You Get Enough", artist:"Michael Jackson" },
+    { title:"Attracted To You", artist:"PinkPantheress" },
+    { title:"Liquorice", artist:"Azealia Banks" },
+    { title:"On Sight", artist:"Kanye West" },
+    { title:"The Sign", artist:"Ace Of Base" },
+    { title:"Back That Up To The Beat", artist:"Madonna" },
+    { title:"Blue Hair", artist:"TV Girl" },
+    { title:"Taking What's Not Yours", artist:"TV Girl" },
+    { title:"BOUNCE", artist:"Charli xcx" },
+    { title:"Rock Music", artist:"Charli xcx" },
+    { title:"Church Girl", artist:"Beyoncé" },
+    { title:"Not Allowed", artist:"TV Girl" },
+    { title:"Turn it up", artist:"PinkPantheress" },
+    { title:"Internet baby (interlude)", artist:"PinkPantheress" },
+    { title:"Vogue", artist:"Madonna" },
+    { title:"New Tank", artist:"Playboi Carti" },
+    { title:"Beat It", artist:"Michael Jackson" },
+    { title:"Someone New", artist:"Hozier" },
+    { title:"Talk Talk", artist:"Charli xcx" },
+    { title:"Fentanyl Tester", artist:"JPEGMAFIA" },
+    { title:"Icy Colors Change", artist:"Azealia Banks" },
+    { title:"Anthems", artist:"Charli xcx" },
+    { title:"P.Y.T", artist:"Michael Jackson" },
+    { title:"Christmas Kids", artist:"Roar" },
+    { title:"Hacker", artist:"Death Grips" },
+    { title:"Count Contessa", artist:"Azealia Banks" }
 ];
 
 const week31 = [
-    { t:"I Follow Rivers", a:"Lykke Li" },
-    { t:"Vogue", a:"Madonna" },
-    { t:"Church Girl", a:"Beyoncé" },
-    { t:"anthems", a:"Charli xcx" },
-    { t:"Believe", a:"Cher" },
-    { t:"Liquorice", a:"Azealia Banks" },
-    { t:"Rock Music", a:"Charli xcx" },
-    { t:"Flourescent Adolescent", a:"Arctic Monkeys" },
-    { t:"Spring Breakers", a:"Charli xcx" },
-    { t:"Not Allowed", a:"TV Girl" },
-    { t:"Turn it up", a:"PinkPantheress" },
-    { t:"New Tank", a:"Playboi Carti" },
-    { t:"Blue Hair", a:"TV Girl" },
-    { t:"All The Things She Said", a:"t.A.T.u." },
-    { t:"Playhouse", a:"Azealia Banks" },
-    { t:"Luxury", a:"Azealia Banks" },
-    { t:"The Sign", a:"Ace of Base" },
-    { t:"no tears left to cry", a:"Ariana Grande" },
-    { t:"Can't Get You Out Of My Head", a:"Kylie Minogue" },
-    { t:"Attracted To You", a:"PinkPantheress" },
-    { t:"Internet baby (interlude)", a:"PinkPantheress" },
-    { t:"hate that I made you love me", a:"Ariana Grande" },
-    { t:"claws", a:"Charli xcx" },
-    { t:"Fentanyl Tester", a:"JPEGMAFIA" },
-    { t:"Don't Stop 'Til You Get Enough", a:"Michael Jackson" },
-    { t:"Back That Up To The Beat", a:"Madonna" },
-    { t:"P.Y.T", a:"Michael Jackson" },
-    { t:"Espresso", a:"Sabrina Carpenter" },
-    { t:"Taking What's Not Yours", a:"TV Girl" },
-    { t:"Talk Talk", a:"Charli xcx" },
-    { t:"Good Luck, Babe!", a:"Chappell Roan" },
-    { t:"pink diamond", a:"Charli xcx" },
-    { t:"BOUNCE", a:"Charli xcx" },
-    { t:"American Boy", a:"Estelle" },
-    { t:"Someone New", a:"Hozier" },
-    { t:"Diet Pepsi", a:"Addison Rae" },
-    { t:"On Sight", a:"Kanye West" },
-    { t:"Icy Colors Change", a:"Azealia Banks" },
-    { t:"Beat It", a:"Michael Jackson" },
-    { t:"Beg For You", a:"Charli xcx" }
+    { title:"I Follow Rivers", artist:"Lykke Li" },
+    { title:"Vogue", artist:"Madonna" },
+    { title:"Church Girl", artist:"Beyoncé" },
+    { title:"anthems", artist:"Charli xcx" },
+    { title:"Believe", artist:"Cher" },
+    { title:"Liquorice", artist:"Azealia Banks" },
+    { title:"Rock Music", artist:"Charli xcx" },
+    { title:"Flourescent Adolescent", artist:"Arctic Monkeys" },
+    { title:"Spring Breakers", artist:"Charli xcx" },
+    { title:"Not Allowed", artist:"TV Girl" },
+    { title:"Turn it up", artist:"PinkPantheress" },
+    { title:"New Tank", artist:"Playboi Carti" },
+    { title:"Blue Hair", artist:"TV Girl" },
+    { title:"All The Things She Said", artist:"t.A.T.u." },
+    { title:"Playhouse", artist:"Azealia Banks" },
+    { title:"Luxury", artist:"Azealia Banks" },
+    { title:"The Sign", artist:"Ace of Base" },
+    { title:"no tears left to cry", artist:"Ariana Grande" },
+    { title:"Can't Get You Out Of My Head", artist:"Kylie Minogue" },
+    { title:"Attracted To You", artist:"PinkPantheress" },
+    { title:"Internet baby (interlude)", artist:"PinkPantheress" },
+    { title:"hate that I made you love me", artist:"Ariana Grande" },
+    { title:"claws", artist:"Charli xcx" },
+    { title:"Fentanyl Tester", artist:"JPEGMAFIA" },
+    { title:"Don't Stop 'Til You Get Enough", artist:"Michael Jackson" },
+    { title:"Back That Up To The Beat", artist:"Madonna" },
+    { title:"P.Y.T", artist:"Michael Jackson" },
+    { title:"Espresso", artist:"Sabrina Carpenter" },
+    { title:"Taking What's Not Yours", artist:"TV Girl" },
+    { title:"Talk Talk", artist:"Charli xcx" },
+    { title:"Good Luck, Babe!", artist:"Chappell Roan" },
+    { title:"pink diamond", artist:"Charli xcx" },
+    { title:"BOUNCE", artist:"Charli xcx" },
+    { title:"American Boy", artist:"Estelle" },
+    { title:"Someone New", artist:"Hozier" },
+    { title:"Diet Pepsi", artist:"Addison Rae" },
+    { title:"On Sight", artist:"Kanye West" },
+    { title:"Icy Colors Change", artist:"Azealia Banks" },
+    { title:"Beat It", artist:"Michael Jackson" },
+    { title:"Beg For You", artist:"Charli xcx" }
 ];
 
 const data = {
@@ -251,75 +274,75 @@ const data = {
     "31/05/26": week31
 };
 
-function id(s){ return s.t + "||" + s.a; }
 
-function pos(list){
-    const m = {};
-    list.forEach((s,i)=> m[id(s)] = i+1);
-    return m;
+
+function buildPositions(list){
+    const map = {};
+    list.forEach((s,i)=> map[key(s)] = i+1);
+    return map;
 }
 
-function move(prev, k, p){
+function getMovement(prevMap, songKey, pos){
+    if(!prevMap) return "NEW";
+    const prev = prevMap[songKey];
     if(!prev) return "NEW";
-    const x = prev[k];
-    if(!x) return "NEW";
-    const d = x - p;
-    if(d === 0) return "—";
-    return d > 0 ? `↑ ${d}` : `↓ ${Math.abs(d)}`;
+    const diff = prev - pos;
+    if(diff === 0) return "—";
+    return diff > 0 ? `↑ ${diff}` : `↓ ${Math.abs(diff)}`;
 }
 
-let i = 2;
 
-async function draw(){
-    const w = weeks[i];
 
-    document.getElementById("dateLabel").innerText = w;
-    document.getElementById("prevBtn").disabled = i === 0;
-    document.getElementById("nextBtn").disabled = i === weeks.length - 1;
+let currentWeekIndex = 2;
 
-    const el = document.getElementById("chart");
-    el.innerHTML = "";
+async function render() {
+    const week = weeks[currentWeekIndex];
 
-    const cur = data[w];
-    const prev = data[weeks[i-1]];
-    const pm = prev ? pos(prev) : null;
+    document.getElementById("dateLabel").innerText = week;
+    document.getElementById("prevBtn").disabled = currentWeekIndex === 0;
+    document.getElementById("nextBtn").disabled = currentWeekIndex === weeks.length - 1;
 
-    for(let n=0;n<cur.length;n++){
-        const s = cur[n];
+    const chart = document.getElementById("chart");
+    chart.innerHTML = "";
 
-        let m = move(pm, id(s), n+1);
-        let cls = "movement";
-        if(m.startsWith("↑")) cls += " up";
-        if(m.startsWith("↓")) cls += " down";
-        if(m === "NEW") cls += " new";
+    const current = data[week];
+    const prev = data[weeks[currentWeekIndex - 1]];
+    const prevMap = prev ? buildPositions(prev) : null;
 
-        const cover =
-            covers[id(s)] ||
-            `https://itunes.apple.com/search?term=${encodeURIComponent(s.t+" "+s.a)}&entity=song&limit=1`;
+    for(let i=0;i<current.length;i++){
+        const song = current[i];
+        const pos = i+1;
+
+        const movement = getMovement(prevMap, key(song), pos);
+        let movementClass = "movement";
+        if(movement.startsWith("↑")) movementClass += " up";
+        if(movement.startsWith("↓")) movementClass += " down";
+        if(movement === "NEW") movementClass += " new";
+
+        const cover = await fetchCover(song.title, song.artist);
 
         const row = document.createElement("div");
         row.className = "row";
 
+        const songKey = key(song);
+
         row.innerHTML = `
-            <div class="rank">${n+1}</div>
-            <div class="cover"><img src="${cover}"></div>
-            <div class="song">
-                <div class="title">${s.t}</div>
-                <div class="artist">${s.a}</div>
+            <div class="rank">${pos}</div>
+            <div class="cover">
+                <img src="${cover}" onclick="editCover('${songKey}')">
             </div>
-            <div class="${cls}">${m}</div>
+            <div class="song">
+                <div class="title">${song.title}</div>
+                <div class="artist">${song.artist}</div>
+            </div>
+            <div class="${movementClass}">${movement}</div>
         `;
 
-        el.appendChild(row);
+        chart.appendChild(row);
     }
 }
 
-function shiftWeek(d){
-    i += d;
-    draw();
-}
-
-draw();
+render();
 </script>
 
 </body>
