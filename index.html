@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Talk of the Personal Charts</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f3f5;
+    color: #111;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 26px;
+    background: #0f0f10;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo img {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #333;
+}
+
+.logo span {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.container {
+    max-width: 980px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #e7e7e7;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+    border-color: #d8d8d8;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+}
+
+.active::before {
+    background: #111;
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.card p {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
+}
+
+.active {
+    border-color: #111;
+}
+
+.empty {
+    opacity: 0.5;
+    background: #fafafa;
+}
+
+.empty:hover {
+    transform: none;
+    box-shadow: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+
+    <div class="logo">
+        <img src="https://pbs.twimg.com/profile_images/1700256819283656704/tcktqQD5_400x400.jpg" alt="logo">
+        <span>Talk of the Personal Charts</span>
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="grid">
+
+        <a class="card active" href="/rhythm">
+            <h3>Rhythm</h3>
+            <p>Active personal chart</p>
+        </a>
+
+        <div class="card empty">
+            <h3>Slot 2</h3>
+            <p>Coming soon</p>
+        </div>
+
+        <div class="card empty">
+            <h3>Slot 3</h3>
+            <p>Coming soon</p>
+        </div>
+
+        <div class="card empty">
+            <h3>Slot 4</h3>
+            <p>Coming soon</p>
+        </div>
+
+        <div class="card empty">
+            <h3>Slot 5</h3>
+            <p>Coming soon</p>
+        </div>
+
+        <div class="card empty">
+            <h3>Slot 6</h3>
+            <p>Coming soon</p>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
