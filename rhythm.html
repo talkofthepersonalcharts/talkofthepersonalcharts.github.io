@@ -1,318 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>rhythm charts</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>rhythm charts</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+    }
+    header {
+      background: #111;
+      color: white;
+      padding: 18px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: 10px auto;
+      padding: 10px;
+    }
+    .week-controls button {
+      padding: 8px 12px;
+      border: none;
+      background: #111;
+      color: white;
+      cursor: pointer;
+    }
+    .week-controls button:disabled {
+      background: #777;
+    }
+    .date {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      background: white;
+    }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f4f4;
-}
+    /* 6 columns: rank+move | cover | song | woc | peak | (spacer removed) */
+    .chart-header, .row {
+      display: grid;
+      grid-template-columns: 90px 60px 1fr 70px 70px;
+      align-items: center;
+    }
+    .chart-header {
+      padding: 10px;
+      background: #eaeaea;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .row {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
 
-header {
-    background: #111;
-    color: white;
-    padding: 18px;
-    font-size: 20px;
-    font-weight: bold;
-}
+    /* Rank cell: position number + movement arrow side by side */
+    .rank-cell {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .rank {
+      font-weight: bold;
+      font-size: 18px;
+      min-width: 28px;
+      text-align: right;
+    }
+    .movement {
+      font-weight: bold;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .up   { color: green; }
+    .down { color: red; }
+    .new  { color: blue; }
+    .same { color: #999; }
 
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    max-width: 1100px;
-    margin: 10px auto;
-    padding: 10px;
-}
+    .cover img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #ddd;
+    }
+    .song {
+      display: flex;
+      flex-direction: column;
+    }
+    .title  { font-weight: bold; }
+    .artist { font-size: 13px; color: #666; }
 
-.week-controls button {
-    padding: 8px 12px;
-    border: none;
-    background: #111;
-    color: white;
-    cursor: pointer;
-}
-
-.week-controls button:disabled {
-    background: #777;
-}
-
-.date {
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.container {
-    max-width: 1100px;
-    margin: 0 auto 40px;
-    background: white;
-}
-
-.chart-header, .row {
-    display: grid;
-    grid-template-columns: 60px 60px 1fr 120px;
-    align-items: center;
-}
-
-.chart-header {
-    padding: 10px;
-    background: #eaeaea;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.row {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.rank {
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.cover img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 4px;
-    background: #ddd;
-}
-
-.song {
-    display: flex;
-    flex-direction: column;
-}
-
-.title {
-    font-weight: bold;
-}
-
-.artist {
-    font-size: 13px;
-    color: #666;
-}
-
-.movement {
-    text-align: center;
-    font-weight: bold;
-}
-
-.up { color: green; }
-.down { color: red; }
-.new { color: blue; }
-</style>
+    .woc, .peak {
+      text-align: center;
+      font-size: 13px;
+      color: #333;
+    }
+    .peak { font-weight: bold; }
+  </style>
 </head>
-
 <body>
 
 <header>Rhythm Charts</header>
 
 <div class="topbar">
-    <div class="week-controls">
-        <button onclick="changeWeek(-1)" id="prevBtn">← Previous</button>
-        <button onclick="changeWeek(1)" id="nextBtn">Next →</button>
-    </div>
-    <div class="date" id="dateLabel"></div>
+  <div class="week-controls">
+    <button onclick="changeWeek(-1)" id="prevBtn">← Previous</button>
+    <button onclick="changeWeek(1)"  id="nextBtn">Next →</button>
+  </div>
+  <div class="date" id="dateLabel"></div>
 </div>
 
 <div class="container">
-    <div class="chart-header">
-        <div>#</div>
-        <div></div>
-        <div>Song</div>
-        <div>Movement</div>
-    </div>
-    <div id="chart"></div>
+  <div class="chart-header">
+    <div>#</div>
+    <div></div>
+    <div>Song</div>
+    <div style="text-align:center">WOC</div>
+    <div style="text-align:center">Peak</div>
+  </div>
+  <div id="chart"></div>
 </div>
 
 <script>
 const weeks = ["17/05/26", "24/05/26", "31/05/26"];
 
-/* =========================
-   DATA (25 / 30 / 40 FIXED)
-   ========================= */
-
+/* ========================= DATA (25 / 30 / 40 FIXED) ========================= */
 const week17 = [
-{t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-{t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
-{t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
-{t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-{t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
-{t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
-{t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
-{t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
-{t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
-{t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
-{t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
-{t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
-{t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
-{t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
-{t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
-{t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
-{t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
-{t:"Hell Of A Life",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d0000b273baf2a68126739ff553f2930a"},
-{t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-{t:"Anna Wintour",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyDhTikI0WcG3xPiA9uNnVgjRingDJwVoaSA&s"},
-{t:"Friday Night",a:"GFOTY",c:"https://images.genius.com/c95081255db8e4cc1baf94ffc911b7c4.1000x1000x1.jpg"},
-{t:"Cloud 909",a:"Lone",c:"https://f4.bcbits.com/img/a4209000436_10.jpg"},
-{t:"Kingdom Hearts Key",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
-{t:"Hollaback Girl",a:"Gwen Stefani",c:"https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png/250px-Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png"}
+  {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+  {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
+  {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
+  {t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+  {t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
+  {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
+  {t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
+  {t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
+  {t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
+  {t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
+  {t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
+  {t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
+  {t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
+  {t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
+  {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
+  {t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
+  {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
+  {t:"Hell Of A Life",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d0000b273baf2a68126739ff553f2930a"},
+  {t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
+  {t:"Anna Wintour",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyDhTikI0WcG3xPiA9uNnVgjRingDJwVoaSA&s"},
+  {t:"Friday Night",a:"GFOTY",c:"https://images.genius.com/c95081255db8e4cc1baf94ffc911b7c4.1000x1000x1.jpg"},
+  {t:"Cloud 909",a:"Lone",c:"https://f4.bcbits.com/img/a4209000436_10.jpg"},
+  {t:"Kingdom Hearts Key",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
+  {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
+  {t:"Hollaback Girl",a:"Gwen Stefani",c:"https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png/250px-Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png"}
 ];
 
 const week24 = [
-{t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
-{t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
-{t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
-{t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
-{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
-{t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
-{t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
-{t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
-{t:"The Sign",a:"Ace Of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
-{t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
-{t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
-{t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-{t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
-{t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
-{t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
-{t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-{t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
-{t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
-{t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
-{t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
-{t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-{t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
-{t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
-{t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-{t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
-{t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-{t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-{t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
-{t:"Hacker",a:"Death Grips",c:"https://d1gdi8qinx8x49.cloudfront.net/540x540/83056.jpeg"},
-{t:"Count Contessa",a:"Azealia Banks",c:"https://i.discogs.com/NCiEjx4w9ocQd-prxo1mHFUMCNPzq4pW7Gy8gxwCr0Y/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NjI1/MjM5LTE1Nzg0MTk1/ODEtNjcyMC5qcGVn.jpeg"}
+  {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
+  {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
+  {t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
+  {t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
+  {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
+  {t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
+  {t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
+  {t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
+  {t:"The Sign",a:"Ace Of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
+  {t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
+  {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
+  {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+  {t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
+  {t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
+  {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
+  {t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+  {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
+  {t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
+  {t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
+  {t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
+  {t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+  {t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
+  {t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
+  {t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
+  {t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
+  {t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+  {t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+  {t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
+  {t:"Hacker",a:"Death Grips",c:"https://d1gdi8qinx8x49.cloudfront.net/540x540/83056.jpeg"},
+  {t:"Count Contessa",a:"Azealia Banks",c:"https://i.discogs.com/NCiEjx4w9ocQd-prxo1mHFUMCNPzq4pW7Gy8gxwCr0Y/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NjI1/MjM5LTE1Nzg0MTk1/ODEtNjcyMC5qcGVn.jpeg"}
 ];
 
 const week31 = [
-{t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
-{t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
-{t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
-{t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-{t:"Believe",a:"Cher",c:"https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png"},
-{t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
-{t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
-{t:"Flourescent Adolescent",a:"Arctic Monkeys",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdo3qsXKrhPxXxNmptTprSPHA7hFv4uTRAJw&s"},
-{t:"Spring Breakers",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/61YyY3MzhxL.jpg"},
-{t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-{t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
-{t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
-{t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
-{t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
-{t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
-{t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
-{t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
-{t:"no tears left to cry",a:"Ariana Grande",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPhdlp_irqCyB8oZul2Yryk_TboZ6XwjV7KA&s"},
-{t:"Can't Get You Out Of My Head",a:"Kylie Minogue",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Kylie_Minogue_-_Fever.png/250px-Kylie_Minogue_-_Fever.png"},
-{t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
-{t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
-{t:"hate that I made you love me",a:"Ariana Grande",c:"https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Ariana_Grande_-_Petal.png/250px-Ariana_Grande_-_Petal.png"},
-{t:"claws",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-{t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-{t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
-{t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
-{t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-{t:"Espresso",a:"Sabrina Carpenter",c:"https://upload.wikimedia.org/wikipedia/en/7/71/Espresso_-_Sabrina_Carpenter.png"},
-{t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-{t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
-{t:"Good Luck, Babe!",a:"Chappell Roan",c:"https://upload.wikimedia.org/wikipedia/en/2/2c/Chappell_Roan_-_Good_Luck%2C_Babe%21.png"},
-{t:"pink diamond",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-{t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
-{t:"American Boy",a:"Estelle",c:"https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/American_Boy_UK_Cover.jpg/250px-American_Boy_UK_Cover.jpg"},
-{t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
-{t:"Diet Pepsi",a:"Addison Rae",c:"https://media.pitchfork.com/photos/680911e60c3c7e90ea0cf2b7/master/w_1600%2Cc_limit/Addison-Rae.jpeg"},
-{t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
-{t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
-{t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-{t:"Beg For You",a:"Charli xcx",c:"https://upload.wikimedia.org/wikipedia/en/b/bf/Charli_XCX_-_Beg_For_You_%28feat._Rina_Sawayama%29.jpg"}
+  {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
+  {t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
+  {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
+  {t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+  {t:"Believe",a:"Cher",c:"https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png"},
+  {t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
+  {t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
+  {t:"Flourescent Adolescent",a:"Arctic Monkeys",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdo3qsXKrhPxXxNmptTprSPHA7hFv4uTRAJw&s"},
+  {t:"Spring Breakers",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/61YyY3MzhxL.jpg"},
+  {t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+  {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
+  {t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
+  {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
+  {t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
+  {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
+  {t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
+  {t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
+  {t:"no tears left to cry",a:"Ariana Grande",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPhdlp_irqCyB8oZul2Yryk_TboZ6XwjV7KA&s"},
+  {t:"Can't Get You Out Of My Head",a:"Kylie Minogue",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Kylie_Minogue_-_Fever.png/250px-Kylie_Minogue_-_Fever.png"},
+  {t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
+  {t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
+  {t:"hate that I made you love me",a:"Ariana Grande",c:"https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Ariana_Grande_-_Petal.png/250px-Ariana_Grande_-_Petal.png"},
+  {t:"claws",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+  {t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
+  {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
+  {t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
+  {t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+  {t:"Espresso",a:"Sabrina Carpenter",c:"https://upload.wikimedia.org/wikipedia/en/7/71/Espresso_-_Sabrina_Carpenter.png"},
+  {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
+  {t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
+  {t:"Good Luck, Babe!",a:"Chappell Roan",c:"https://upload.wikimedia.org/wikipedia/en/2/2c/Chappell_Roan_-_Good_Luck%2C_Babe%21.png"},
+  {t:"pink diamond",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
+  {t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
+  {t:"American Boy",a:"Estelle",c:"https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/American_Boy_UK_Cover.jpg/250px-American_Boy_UK_Cover.jpg"},
+  {t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
+  {t:"Diet Pepsi",a:"Addison Rae",c:"https://media.pitchfork.com/photos/680911e60c3c7e90ea0cf2b7/master/w_1600%2Cc_limit/Addison-Rae.jpeg"},
+  {t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
+  {t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
+  {t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
+  {t:"Beg For You",a:"Charli xcx",c:"https://upload.wikimedia.org/wikipedia/en/b/bf/Charli_XCX_-_Beg_For_You_%28feat._Rina_Sawayama%29.jpg"}
 ];
-
 /* ========================= */
 
 const data = {
-"17/05/26": week17,
-"24/05/26": week24,
-"31/05/26": week31
+  "17/05/26": week17,
+  "24/05/26": week24,
+  "31/05/26": week31
 };
 
-function id(s){return s.t+"||"+s.a}
+function id(s) { return s.t + "||" + s.a; }
 
-function pos(list){
-const m={}
-list.forEach((s,i)=>m[id(s)]=i+1)
-return m
+/* Build a position map {songId -> position (1-based)} for a given week list */
+function pos(list) {
+  const m = {};
+  list.forEach((s, i) => m[id(s)] = i + 1);
+  return m;
 }
 
-function move(prev,k,p){
-if(!prev) return "NEW"
-const x=prev[k]
-if(!x) return "NEW"
-const d=x-p
-if(d===0) return "—"
-return d>0?"↑ "+d:"↓ "+Math.abs(d)
+/* Movement arrow: compare previous week's position to current */
+function move(prevMap, key, currentPos) {
+  if (!prevMap) return "NEW";
+  const x = prevMap[key];
+  if (!x) return "NEW";
+  const d = x - currentPos;
+  if (d === 0) return "—";
+  return d > 0 ? "↑ " + d : "↓ " + Math.abs(d);
 }
 
-let i=2
-
-function render(){
-const w=weeks[i]
-
-document.getElementById("dateLabel").innerText=w
-document.getElementById("prevBtn").disabled=i===0
-document.getElementById("nextBtn").disabled=i===weeks.length-1
-
-const el=document.getElementById("chart")
-el.innerHTML=""
-
-const list=data[w]
-const prev=data[weeks[i-1]]
-const pm=prev?pos(prev):null
-
-for(let n=0;n<list.length;n++){
-const s=list[n]
-
-let m=move(pm,id(s),n+1)
-
-let cls="movement"
-if(m.startsWith("↑")) cls+=" up"
-if(m.startsWith("↓")) cls+=" down"
-if(m==="NEW") cls+=" new"
-
-const row=document.createElement("div")
-row.className="row"
-
-row.innerHTML=`
-<div class="rank">${n+1}</div>
-<div class="cover"><img src="${s.c}"></div>
-<div class="song">
-<div class="title">${s.t}</div>
-<div class="artist">${s.a}</div>
-</div>
-<div class="${cls}">${m}</div>
-`
-
-el.appendChild(row)
-}
+/* For a given song key and current week index (0-based),
+   look ONLY at weeks[0..weekIdx] to compute:
+   - woc: how many of those weeks the song appeared in
+   - peak: best (lowest number) position across those weeks */
+function wocAndPeak(key, weekIdx) {
+  let woc = 0;
+  let peak = Infinity;
+  for (let w = 0; w <= weekIdx; w++) {
+    const list = data[weeks[w]];
+    const pMap = pos(list);
+    if (pMap[key] !== undefined) {
+      woc++;
+      if (pMap[key] < peak) peak = pMap[key];
+    }
+  }
+  return { woc, peak };
 }
 
-function changeWeek(d){i+=d;render()}
+let i = 2; // default to most recent week
 
-render()
+function render() {
+  const w = weeks[i];
+  document.getElementById("dateLabel").innerText = w;
+  document.getElementById("prevBtn").disabled = i === 0;
+  document.getElementById("nextBtn").disabled = i === weeks.length - 1;
+
+  const el = document.getElementById("chart");
+  el.innerHTML = "";
+
+  const list = data[w];
+  const prev = i > 0 ? data[weeks[i - 1]] : null;
+  const pm = prev ? pos(prev) : null;
+
+  for (let n = 0; n < list.length; n++) {
+    const s = list[n];
+    const key = id(s);
+    const currentPos = n + 1;
+
+    // Movement
+    let m = move(pm, key, currentPos);
+    let mvCls = "movement";
+    if (m.startsWith("↑")) mvCls += " up";
+    else if (m.startsWith("↓")) mvCls += " down";
+    else if (m === "NEW") mvCls += " new";
+    else mvCls += " same";
+
+    // WOC + Peak (no look-ahead)
+    const { woc, peak } = wocAndPeak(key, i);
+
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <div class="rank-cell">
+        <div class="rank">${currentPos}</div>
+        <div class="${mvCls}">${m}</div>
+      </div>
+      <div class="cover"><img src="${s.c}" alt=""></div>
+      <div class="song">
+        <div class="title">${s.t}</div>
+        <div class="artist">${s.a}</div>
+      </div>
+      <div class="woc">${woc}</div>
+      <div class="peak">${peak}</div>
+    `;
+    el.appendChild(row);
+  }
+}
+
+function changeWeek(d) { i += d; render(); }
+render();
 </script>
-
 </body>
 </html>
