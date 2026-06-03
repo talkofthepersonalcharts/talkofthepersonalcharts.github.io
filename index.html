@@ -65,6 +65,60 @@ header {
   border: 2px solid #d946ef;
 }
 
+/* TICKER */
+.ticker-wrap {
+  background: #4c1d95;
+  border-bottom: 3px solid #3b0764;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 7px 0;
+  position: relative;
+}
+
+.ticker-wrap::before,
+.ticker-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+}
+.ticker-wrap::before { left: 0;  background: linear-gradient(to right, #4c1d95, transparent); }
+.ticker-wrap::after  { right: 0; background: linear-gradient(to left,  #4c1d95, transparent); }
+
+.ticker-track {
+  display: inline-flex;
+  animation: ticker 30s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 30px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #e9d5ff;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ticker-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c084fc;
+  flex-shrink: 0;
+}
+
 /* HERO */
 .hero {
   text-align: center;
@@ -111,7 +165,7 @@ header {
 /* GRID */
 .grid-wrap {
   max-width: 900px;
-  margin: 0 auto 60px;
+  margin: 0 auto 32px;
   padding: 0 20px;
 }
 
@@ -191,7 +245,6 @@ header {
   text-overflow: ellipsis;
 }
 
-/* arrow badge */
 .card-arrow {
   width: 26px;
   height: 26px;
@@ -213,16 +266,104 @@ header {
   stroke-linejoin: round;
 }
 
-/* empty */
 .card.empty {
   border-color: #ddd6fe;
   box-shadow: 4px 4px 0 #ddd6fe;
   opacity: 0.55;
   cursor: default;
 }
-
 .card.empty .card-name { color: #a78bfa; }
 .card.empty .card-song { color: #c4b5fd; }
+
+/* NEWSLETTER TEASER */
+.newsletter-teaser-wrap {
+  max-width: 900px;
+  margin: 0 auto 50px;
+  padding: 0 20px;
+}
+
+.newsletter-teaser {
+  background: white;
+  border: 3px solid #7c3aed;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #4c1d95;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.1s, box-shadow 0.1s;
+  gap: 16px;
+}
+
+.newsletter-teaser:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #4c1d95;
+}
+
+.newsletter-teaser:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #4c1d95;
+}
+
+.nl-teaser-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nl-teaser-emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.nl-teaser-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px;
+  color: #4c1d95;
+  margin-bottom: 2px;
+}
+
+.nl-teaser-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a78bfa;
+}
+
+.nl-latest-badge {
+  background: #fef3c7;
+  border: 2px solid #f59e0b;
+  color: #92400e;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.nl-teaser-arrow {
+  width: 30px;
+  height: 30px;
+  background: #7c3aed;
+  border-radius: 50%;
+  border: 2px solid #4c1d95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nl-teaser-arrow svg {
+  width: 13px;
+  height: 13px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* FOOTER */
 footer {
@@ -247,6 +388,11 @@ footer {
   </a>
   <span class="header-badge">🎵 Weekly</span>
 </header>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker"></div>
+</div>
 
 <div class="hero">
   <h1>What's everyone listening to?</h1>
@@ -328,7 +474,49 @@ footer {
   </div>
 </div>
 
+<!-- NEWSLETTER TEASER -->
+<div class="section-label">
+  <span>Newsletter</span>
+  <div class="section-line"></div>
+</div>
+
+<div class="newsletter-teaser-wrap">
+  <a class="newsletter-teaser" href="/newsletter">
+    <div class="nl-teaser-left">
+      <span class="nl-teaser-emoji">📰</span>
+      <div>
+        <div class="nl-teaser-title">The Weekly Rundown</div>
+        <div class="nl-teaser-sub">Chart news, hot takes &amp; weekly highlights</div>
+      </div>
+    </div>
+    <span class="nl-latest-badge">✨ Latest: 31 May 2026</span>
+    <div class="nl-teaser-arrow">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  </a>
+</div>
+
 <footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
+
+<script>
+// TICKER
+const messages = [
+  "Not officially affiliated with Talk Of The Charts",
+  "Estd. 2026",
+  "Reach out to add your chart!",
+  "Currently archiving ONE person's chart"
+];
+
+const track = document.getElementById('ticker');
+// duplicate for seamless loop
+const all = [...messages, ...messages, ...messages, ...messages];
+all.forEach(msg => {
+  const item = document.createElement('span');
+  item.className = 'ticker-item';
+  item.innerHTML = `<span class="ticker-dot"></span>${msg}<span class="ticker-dot"></span>`;
+  track.appendChild(item);
+});
+</script>
 
 </body>
 </html>
