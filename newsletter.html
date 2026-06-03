@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Weekly Rundown — Talk of the Personal Charts</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', Arial, sans-serif;
+  background-color: #ffe4f0;
+  background-image:
+    radial-gradient(circle, #ff9ed2 1px, transparent 1px),
+    radial-gradient(circle, #ffb3e0 1px, transparent 1px);
+  background-size: 28px 28px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+  min-height: 100vh;
+  color: #1a0533;
+}
+
+/* HEADER */
+header {
+  background: #7c3aed;
+  border-bottom: 4px solid #4c1d95;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+}
+
+.back-link {
+  font-family: 'Fredoka One', cursive;
+  font-size: 14px;
+  color: #c4b5fd;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.back-link:hover { color: #fff; }
+
+.header-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px;
+  color: #fff;
+}
+
+.header-right { width: 80px; }
+
+/* TICKER */
+.ticker-wrap {
+  background: #4c1d95;
+  border-bottom: 3px solid #3b0764;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 7px 0;
+  position: relative;
+}
+.ticker-wrap::before,
+.ticker-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+}
+.ticker-wrap::before { left: 0;  background: linear-gradient(to right, #4c1d95, transparent); }
+.ticker-wrap::after  { right: 0; background: linear-gradient(to left,  #4c1d95, transparent); }
+
+.ticker-track {
+  display: inline-flex;
+  animation: ticker 30s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 30px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #e9d5ff;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ticker-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c084fc;
+  flex-shrink: 0;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 44px 20px 28px;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #d946ef;
+  margin-bottom: 10px;
+}
+
+.hero h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(30px, 5vw, 50px);
+  color: #4c1d95;
+  text-shadow: 3px 3px 0 #c084fc;
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+
+.hero p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6d28d9;
+}
+
+/* SECTION LABEL */
+.section-label {
+  max-width: 780px;
+  margin: 0 auto 16px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-label span {
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px;
+  color: #7c3aed;
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #c084fc 0, #c084fc 6px, transparent 6px, transparent 12px);
+}
+
+/* ARTICLE LIST */
+.articles-wrap {
+  max-width: 780px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ARTICLE CARD */
+.article-card {
+  background: white;
+  border: 3px solid #7c3aed;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #4c1d95;
+  overflow: hidden;
+  transition: box-shadow 0.1s, transform 0.1s;
+}
+
+/* ARTICLE HEADER (clickable) */
+.article-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  background: #faf5ff;
+  border-bottom: 2px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+  gap: 12px;
+}
+
+.article-header:hover { background: #f3e8ff; }
+
+.article-card.open .article-header {
+  border-bottom-color: #e9d5ff;
+}
+
+.article-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.article-date-badge {
+  background: #7c3aed;
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid #4c1d95;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.article-header-text { min-width: 0; }
+
+.article-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px;
+  color: #4c1d95;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.article-preview {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a78bfa;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.article-toggle {
+  width: 30px;
+  height: 30px;
+  background: #ede9fe;
+  border-radius: 50%;
+  border: 2px solid #c4b5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.article-toggle svg {
+  width: 13px;
+  height: 13px;
+  stroke: #7c3aed;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+.article-card.open .article-toggle { background: #7c3aed; }
+.article-card.open .article-toggle svg { stroke: #fff; transform: rotate(180deg); }
+
+/* ACCORDION BODY */
+.article-body-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+.article-card.open .article-body-wrap {
+  grid-template-rows: 1fr;
+}
+
+.article-body-inner {
+  overflow: hidden;
+}
+
+/* ARTICLE BODY CONTENT */
+.article-body {
+  padding: 22px 24px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3b0764;
+  line-height: 1.8;
+}
+
+.article-body p {
+  margin-bottom: 14px;
+}
+.article-body p:last-child { margin-bottom: 0; }
+
+.article-body h3 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 17px;
+  color: #7c3aed;
+  margin: 20px 0 8px;
+}
+
+.article-body h3:first-child { margin-top: 0; }
+
+.article-body .highlight {
+  background: #f3e8ff;
+  border-left: 4px solid #7c3aed;
+  padding: 12px 16px;
+  border-radius: 0 10px 10px 0;
+  margin: 16px 0;
+  font-style: italic;
+  color: #4c1d95;
+  font-weight: 700;
+}
+
+.article-body .song-mention {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #faf5ff;
+  border: 2px solid #ddd6fe;
+  border-radius: 8px;
+  padding: 2px 10px 2px 6px;
+  font-style: normal;
+  font-weight: 700;
+  color: #4c1d95;
+  font-size: 13px;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.article-body .song-mention::before {
+  content: '🎵';
+  font-size: 12px;
+}
+
+/* mover table */
+.mover-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 13px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #e9d5ff;
+}
+
+.mover-table th {
+  background: #7c3aed;
+  color: white;
+  font-family: 'Fredoka One', cursive;
+  font-size: 13px;
+  padding: 8px 12px;
+  text-align: left;
+  letter-spacing: 0.04em;
+}
+
+.mover-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f3e8ff;
+  font-weight: 700;
+}
+
+.mover-table tr:last-child td { border-bottom: none; }
+.mover-table tr:nth-child(even) td { background: #faf5ff; }
+
+.up-tag   { color: #16a34a; font-weight: 800; }
+.down-tag { color: #dc2626; font-weight: 800; }
+.new-tag  { color: #7c3aed; font-weight: 800; }
+
+/* FOOTER */
+footer {
+  border-top: 3px solid #7c3aed;
+  background: #4c1d95;
+  padding: 16px 28px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c4b5fd;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="/">← back</a>
+  <div class="header-title">📰 The Weekly Rundown</div>
+  <div class="header-right"></div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">📰 Newsletter Archive</div>
+  <h1>The Weekly Rundown</h1>
+  <p>Chart news, hot takes &amp; weekly highlights — every week!</p>
+</div>
+
+<div class="section-label">
+  <span>All Issues</span>
+  <div class="section-line"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ARTICLES LIST
+     To add a new issue: copy one .article-card block and paste it
+     ABOVE the existing ones (newest first).
+     Fill in: date badge, title, preview text, and body content.
+     Body supports: <p>, <h3>, <div class="highlight">, <table class="mover-table">
+     ════════════════════════════════════════════════════════════════ -->
+<div class="articles-wrap">
+
+  <!-- ══════════════════════════════════════════════
+       ISSUE: 31 May 2026
+       ══════════════════════════════════════════════ -->
+  <div class="article-card" id="issue-31-05-26">
+    <div class="article-header" onclick="toggleArticle(this)">
+      <div class="article-header-left">
+        <span class="article-date-badge">31 May 2026</span>
+        <div class="article-header-text">
+          <div class="article-title">Week 3 Wrap-Up</div>
+          <div class="article-preview">Write a short preview sentence here — shows when collapsed!</div>
+        </div>
+      </div>
+      <div class="article-toggle">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="article-body-wrap">
+      <div class="article-body-inner">
+        <div class="article-body">
+
+          <!-- ✏️ WRITE YOUR ARTICLE BELOW THIS LINE -->
+
+          <h3>🏆 Number One</h3>
+          <p>Write about this week's #1 song here. What does it mean that it's at the top? Any hot takes?</p>
+
+          <div class="highlight">"A pull-quote or spicy opinion goes here — readers love these!"</div>
+
+          <h3>📈 Biggest Movers</h3>
+          <p>Talk about the biggest climbers and fallers this week. You can use the table below or just write freely!</p>
+
+          <table class="mover-table">
+            <tr>
+              <th>Song</th>
+              <th>Artist</th>
+              <th>Movement</th>
+            </tr>
+            <tr>
+              <td>Song Title</td>
+              <td>Artist Name</td>
+              <td class="up-tag">↑ 14</td>
+            </tr>
+            <tr>
+              <td>Song Title</td>
+              <td>Artist Name</td>
+              <td class="new-tag">NEW</td>
+            </tr>
+            <tr>
+              <td>Song Title</td>
+              <td>Artist Name</td>
+              <td class="down-tag">↓ 8</td>
+            </tr>
+          </table>
+
+          <h3>💬 This Week's Vibe</h3>
+          <p>Any other thoughts, themes, or observations from the week? Go wild here!</p>
+
+          <!-- ✏️ END OF ARTICLE -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       TEMPLATE — copy from here to add a new issue:
+       ══════════════════════════════════════════════
+
+  <div class="article-card">
+    <div class="article-header" onclick="toggleArticle(this)">
+      <div class="article-header-left">
+        <span class="article-date-badge">DD Mon YYYY</span>
+        <div class="article-header-text">
+          <div class="article-title">Your Issue Title</div>
+          <div class="article-preview">One sentence preview shown when collapsed.</div>
+        </div>
+      </div>
+      <div class="article-toggle">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="article-body-wrap">
+      <div class="article-body-inner">
+        <div class="article-body">
+
+          <h3>Your Section Heading</h3>
+          <p>Your text here.</p>
+          <div class="highlight">A pull-quote or highlight.</div>
+          <h3>Another Heading</h3>
+          <p>More text.</p>
+
+          <table class="mover-table">
+            <tr><th>Song</th><th>Artist</th><th>Movement</th></tr>
+            <tr><td>Title</td><td>Artist</td><td class="up-tag">↑ 5</td></tr>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+       ══════════════════════════════════════════════ -->
+
+</div>
+
+<footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
+
+<script>
+// TICKER
+const messages = [
+  "Not officially affiliated with Talk Of The Charts",
+  "Estd. 2026",
+  "Reach out to add your chart!",
+  "Currently archiving ONE person's chart"
+];
+
+const track = document.getElementById('ticker');
+const all = [...messages, ...messages, ...messages, ...messages];
+all.forEach(msg => {
+  const item = document.createElement('span');
+  item.className = 'ticker-item';
+  item.innerHTML = `<span class="ticker-dot"></span>${msg}<span class="ticker-dot"></span>`;
+  track.appendChild(item);
+});
+
+// ACCORDION
+function toggleArticle(headerEl) {
+  const card = headerEl.closest('.article-card');
+  card.classList.toggle('open');
+}
+
+// Open the first/latest article by default
+document.addEventListener('DOMContentLoaded', () => {
+  const first = document.querySelector('.article-card');
+  if (first) first.classList.add('open');
+});
+</script>
+
+</body>
+</html>
