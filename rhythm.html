@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rhythm Charts</title>
+  <title>Rhythm's Chart</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
     body {
       font-family: 'Nunito', Arial, sans-serif;
       background-color: #ffe4f0;
@@ -19,7 +19,7 @@
       min-height: 100vh;
       color: #1a0533;
     }
-
+ 
     /* HEADER */
     header {
       background: #7c3aed;
@@ -30,7 +30,6 @@
       justify-content: space-between;
       height: 62px;
     }
-
     .back-link {
       font-family: 'Fredoka One', cursive;
       font-size: 14px;
@@ -41,33 +40,41 @@
       gap: 6px;
     }
     .back-link:hover { color: #fff; }
-
     .header-title {
       font-family: 'Fredoka One', cursive;
       font-size: 22px;
       color: #fff;
-      letter-spacing: 0.5px;
     }
-
     .header-right { width: 80px; }
-
-    /* TOPBAR */
-    .topbar {
-      max-width: 860px;
-      margin: 24px auto 16px;
+ 
+    /* MAIN LAYOUT: chart + calendar side by side */
+    .page-body {
+      max-width: 1060px;
+      margin: 28px auto 60px;
       padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 230px;
+      gap: 20px;
+      align-items: start;
+    }
+ 
+    /* LEFT: topbar + chart */
+    .chart-col {}
+ 
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 14px;
       gap: 12px;
     }
-
+ 
     .week-controls {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
+ 
     .week-controls button {
       padding: 8px 16px;
       border: 3px solid #4c1d95;
@@ -96,25 +103,18 @@
       cursor: not-allowed;
       opacity: 0.6;
     }
-
+ 
     .date-bubble {
       background: #4c1d95;
       color: #f0e6ff;
       font-family: 'Fredoka One', cursive;
-      font-size: 16px;
+      font-size: 15px;
       padding: 8px 20px;
       border-radius: 999px;
       border: 3px solid #7c3aed;
-      letter-spacing: 0.5px;
     }
-
-    /* CHART CONTAINER */
-    .container {
-      max-width: 860px;
-      margin: 0 auto 50px;
-      padding: 0 20px;
-    }
-
+ 
+    /* CHART BOX */
     .chart-box {
       background: white;
       border: 3px solid #7c3aed;
@@ -122,8 +122,7 @@
       overflow: hidden;
       box-shadow: 5px 5px 0 #4c1d95;
     }
-
-    /* HEADER ROW */
+ 
     .chart-header {
       display: grid;
       grid-template-columns: 100px 64px 1fr 72px 72px;
@@ -135,15 +134,10 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: #e9d5ff;
-      gap: 0;
     }
-
-    .chart-header div:last-child,
-    .chart-header div:nth-child(4) {
-      text-align: center;
-    }
-
-    /* ROWS */
+    .chart-header div:nth-child(4),
+    .chart-header div:nth-child(5) { text-align: center; }
+ 
     .row {
       display: grid;
       grid-template-columns: 100px 64px 1fr 72px 72px;
@@ -152,28 +146,22 @@
       border-bottom: 2px solid #f3e8ff;
       transition: background 0.12s;
     }
-
     .row:last-child { border-bottom: none; }
-
-    .row:nth-child(odd) { background: #faf5ff; }
+    .row:nth-child(odd)  { background: #faf5ff; }
     .row:nth-child(even) { background: #fff; }
     .row:hover { background: #f0e6ff; }
-
-    /* top 3 highlight */
     .row.top1 { background: #fef9c3 !important; }
     .row.top2 { background: #f0fdf4 !important; }
     .row.top3 { background: #fff7ed !important; }
     .row.top1:hover { background: #fef08a !important; }
     .row.top2:hover { background: #dcfce7 !important; }
     .row.top3:hover { background: #ffedd5 !important; }
-
-    /* rank cell */
+ 
     .rank-cell {
       display: flex;
       align-items: center;
       gap: 4px;
     }
-
     .rank {
       font-family: 'Fredoka One', cursive;
       font-size: 20px;
@@ -181,52 +169,184 @@
       min-width: 30px;
       text-align: right;
     }
-
     .row.top1 .rank { color: #854d0e; font-size: 22px; }
     .row.top2 .rank { color: #166534; font-size: 21px; }
     .row.top3 .rank { color: #9a3412; font-size: 21px; }
-
-    .movement {
-      font-size: 11px;
-      font-weight: 800;
-      white-space: nowrap;
-      line-height: 1;
-    }
+ 
+    .movement { font-size: 11px; font-weight: 800; white-space: nowrap; }
     .up   { color: #16a34a; }
     .down { color: #dc2626; }
     .new  { color: #7c3aed; }
     .same { color: #a78bfa; }
-
-    /* cover */
+ 
     .cover img {
-      width: 46px;
-      height: 46px;
+      width: 46px; height: 46px;
       object-fit: cover;
       border-radius: 8px;
       border: 2px solid #ddd6fe;
       background: #f3e8ff;
       display: block;
     }
-
-    /* song info */
     .song { display: flex; flex-direction: column; gap: 2px; padding-left: 2px; }
     .title  { font-weight: 800; font-size: 14px; color: #1a0533; }
     .artist { font-size: 12px; font-weight: 600; color: #7c3aed; }
-
-    /* woc / peak */
-    .woc, .peak {
+    .woc  { text-align: center; font-size: 13px; font-weight: 700; color: #6d28d9; }
+    .peak { text-align: center; font-family: 'Fredoka One', cursive; font-size: 15px; color: #4c1d95; }
+ 
+    /* 404 state */
+    .not-found {
+      padding: 60px 20px;
       text-align: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: #6d28d9;
     }
-    .peak { color: #4c1d95; font-family: 'Fredoka One', cursive; font-size: 15px; }
-
+    .not-found .emoji { font-size: 48px; margin-bottom: 16px; }
+    .not-found h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 26px;
+      color: #4c1d95;
+      margin-bottom: 8px;
+    }
+    .not-found p { font-size: 14px; font-weight: 600; color: #a78bfa; }
+ 
+    /* RIGHT: CALENDAR */
+    .calendar-col {
+      position: sticky;
+      top: 20px;
+    }
+ 
+    .calendar-box {
+      background: white;
+      border: 3px solid #7c3aed;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 4px 4px 0 #4c1d95;
+    }
+ 
+    .calendar-header {
+      background: #7c3aed;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+ 
+    .cal-nav {
+      background: none;
+      border: 2px solid #c4b5fd;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 2px 8px;
+      font-family: 'Nunito', sans-serif;
+      transition: background 0.15s;
+    }
+    .cal-nav:hover { background: rgba(255,255,255,0.15); }
+ 
+    .cal-month-label {
+      font-family: 'Fredoka One', cursive;
+      font-size: 15px;
+      color: #fff;
+    }
+ 
+    .calendar-grid {
+      padding: 10px 10px 12px;
+    }
+ 
+    .cal-days-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 4px;
+    }
+    .cal-day-name {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a78bfa;
+      padding: 4px 0;
+    }
+ 
+    .cal-cells {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+ 
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ccc;
+      position: relative;
+    }
+ 
+    /* has a chart entry */
+    .cal-cell.has-chart {
+      background: #ede9fe;
+      color: #4c1d95;
+      cursor: pointer;
+      border: 2px solid #c4b5fd;
+      transition: background 0.12s, transform 0.1s;
+    }
+    .cal-cell.has-chart:hover {
+      background: #ddd6fe;
+      transform: scale(1.08);
+    }
+    .cal-cell.has-chart.active {
+      background: #7c3aed;
+      color: #fff;
+      border-color: #4c1d95;
+      box-shadow: 2px 2px 0 #4c1d95;
+    }
+ 
+    /* today marker */
+    .cal-cell.today:not(.has-chart) {
+      color: #d946ef;
+      font-weight: 800;
+    }
+    .cal-cell.today::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: #d946ef;
+      border-radius: 50%;
+    }
+ 
+    /* empty spacer cells */
+    .cal-cell.empty { pointer-events: none; }
+ 
+    .calendar-legend {
+      padding: 0 12px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #a78bfa;
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      background: #ede9fe;
+      border: 2px solid #c4b5fd;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+ 
     /* footer */
     footer {
       border-top: 3px solid #7c3aed;
       background: #4c1d95;
-      padding: 14px 28px;
+      padding: 16px 28px;
       text-align: center;
       font-size: 12px;
       font-weight: 700;
@@ -237,41 +357,74 @@
   </style>
 </head>
 <body>
-
+ 
 <header>
   <a class="back-link" href="/">← back</a>
   <div class="header-title">🎵 Rhythm's Chart</div>
   <div class="header-right"></div>
 </header>
-
-<div class="topbar">
-  <div class="week-controls">
-    <button onclick="changeWeek(-1)" id="prevBtn">← Prev</button>
-    <button onclick="changeWeek(1)"  id="nextBtn">Next →</button>
-  </div>
-  <div class="date-bubble" id="dateLabel"></div>
-</div>
-
-<div class="container">
-  <div class="chart-box">
-    <div class="chart-header">
-      <div>#</div>
-      <div></div>
-      <div>Song</div>
-      <div>WOC</div>
-      <div>Peak</div>
+ 
+<div class="page-body">
+ 
+  <!-- LEFT: chart -->
+  <div class="chart-col">
+    <div class="topbar">
+      <div class="week-controls">
+        <button id="prevBtn" onclick="navWeek(-1)">← Prev</button>
+        <button id="nextBtn" onclick="navWeek(1)">Next →</button>
+      </div>
+      <div class="date-bubble" id="dateLabel"></div>
     </div>
-    <div id="chart"></div>
+ 
+    <div class="chart-box">
+      <div class="chart-header">
+        <div>#</div>
+        <div></div>
+        <div>Song</div>
+        <div style="text-align:center">WOC</div>
+        <div style="text-align:center">Peak</div>
+      </div>
+      <div id="chart"></div>
+    </div>
   </div>
+ 
+  <!-- RIGHT: calendar -->
+  <div class="calendar-col">
+    <div class="calendar-box">
+      <div class="calendar-header">
+        <button class="cal-nav" onclick="calPrev()">‹</button>
+        <span class="cal-month-label" id="calMonthLabel"></span>
+        <button class="cal-nav" onclick="calNext()">›</button>
+      </div>
+      <div class="calendar-grid">
+        <div class="cal-days-header">
+          <div class="cal-day-name">Mo</div>
+          <div class="cal-day-name">Tu</div>
+          <div class="cal-day-name">We</div>
+          <div class="cal-day-name">Th</div>
+          <div class="cal-day-name">Fr</div>
+          <div class="cal-day-name">Sa</div>
+          <div class="cal-day-name">Su</div>
+        </div>
+        <div class="cal-cells" id="calCells"></div>
+      </div>
+      <div class="calendar-legend">
+        <div class="legend-dot"></div>
+        Chart available
+      </div>
+    </div>
+  </div>
+ 
 </div>
-
+ 
 <footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
-
+ 
 <script>
-const weeks = ["17/05/26", "24/05/26", "31/05/26"];
-
-/* ========================= DATA (25 / 30 / 40 FIXED) ========================= */
-const week17 = [
+// ============================================================
+//  CHART DATA
+// ============================================================
+ 
+const week_2026_05_17 = [
   {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
   {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
   {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
@@ -298,8 +451,8 @@ const week17 = [
   {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
   {t:"Hollaback Girl",a:"Gwen Stefani",c:"https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png/250px-Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png"}
 ];
-
-const week24 = [
+ 
+const week_2026_05_24 = [
   {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
   {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
   {t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
@@ -331,8 +484,8 @@ const week24 = [
   {t:"Hacker",a:"Death Grips",c:"https://d1gdi8qinx8x49.cloudfront.net/540x540/83056.jpeg"},
   {t:"Count Contessa",a:"Azealia Banks",c:"https://i.discogs.com/NCiEjx4w9ocQd-prxo1mHFUMCNPzq4pW7Gy8gxwCr0Y/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NjI1/MjM5LTE1Nzg0MTk1/ODEtNjcyMC5qcGVn.jpeg"}
 ];
-
-const week31 = [
+ 
+const week_2026_05_31 = [
   {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
   {t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
   {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
@@ -374,79 +527,137 @@ const week31 = [
   {t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
   {t:"Beg For You",a:"Charli xcx",c:"https://upload.wikimedia.org/wikipedia/en/b/bf/Charli_XCX_-_Beg_For_You_%28feat._Rina_Sawayama%29.jpg"}
 ];
-/* ========================= */
-
-const data = {
-  "17/05/26": week17,
-  "24/05/26": week24,
-  "31/05/26": week31
+ 
+// ============================================================
+//  WEEKS REGISTRY
+//  To add a new week: add ONE line here + the data array above.
+//  Everything else (calendar, prev/next, WOC, peak) is automatic.
+// ============================================================
+const WEEKS = {
+  "2026-05-17": week_2026_05_17,
+  "2026-05-24": week_2026_05_24,
+  "2026-05-31": week_2026_05_31,
+  // "2026-06-07": week_2026_06_07,   ← uncomment + add data above to add week 4!
 };
-
-function id(s) { return s.t + "||" + s.a; }
-
-function pos(list) {
+ 
+// ============================================================
+//  ENGINE — nothing below needs touching to add new weeks
+// ============================================================
+ 
+// Sorted list of slugs (oldest first)
+const sortedSlugs = Object.keys(WEEKS).sort();
+const today = new Date();
+ 
+// Parse slug from hash (#2026-05-17), falling back to most recent week
+function getSlugFromURL() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && /^\d{4}-\d{2}-\d{2}$/.test(hash) && WEEKS[hash]) return hash;
+  // Also support /rhythm/2026-05-17 path on a real server
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  const last = parts[parts.length - 1];
+  if (last && /^\d{4}-\d{2}-\d{2}$/.test(last) && WEEKS[last]) return last;
+  return sortedSlugs[sortedSlugs.length - 1];
+}
+ 
+function slugToDate(slug) {
+  const [y, m, d] = slug.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+ 
+function fmtSlug(slug) {
+  const d = slugToDate(slug);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
+}
+ 
+function navigateTo(slug) {
+  // Hash navigation — works in previews, iframes, and real servers
+  window.location.hash = slug;
+  // hashchange fires automatically, but call directly too for same-hash clicks
+  renderChart(slug);
+  renderCalendar(slug);
+}
+ 
+// Handle browser back/forward and hash changes
+window.addEventListener('hashchange', () => {
+  const slug = getSlugFromURL();
+  renderChart(slug);
+  renderCalendar(slug);
+});
+ 
+// ---- CHART HELPERS ----
+function songId(s) { return s.t + '||' + s.a; }
+ 
+function posMap(list) {
   const m = {};
-  list.forEach((s, i) => m[id(s)] = i + 1);
+  list.forEach((s, i) => m[songId(s)] = i + 1);
   return m;
 }
-
-function move(prevMap, key, currentPos) {
-  if (!prevMap) return "NEW";
+ 
+function movement(prevMap, key, cur) {
+  if (!prevMap) return 'NEW';
   const x = prevMap[key];
-  if (!x) return "NEW";
-  const d = x - currentPos;
-  if (d === 0) return "—";
-  return d > 0 ? "↑ " + d : "↓ " + Math.abs(d);
+  if (!x) return 'NEW';
+  const d = x - cur;
+  if (d === 0) return '—';
+  return d > 0 ? '↑ ' + d : '↓ ' + Math.abs(d);
 }
-
-function wocAndPeak(key, weekIdx) {
-  let woc = 0;
-  let peak = Infinity;
-  for (let w = 0; w <= weekIdx; w++) {
-    const list = data[weeks[w]];
-    const pMap = pos(list);
-    if (pMap[key] !== undefined) {
+ 
+function wocAndPeak(key, slugIdx) {
+  let woc = 0, peak = Infinity;
+  for (let w = 0; w <= slugIdx; w++) {
+    const pm = posMap(WEEKS[sortedSlugs[w]]);
+    if (pm[key] !== undefined) {
       woc++;
-      if (pMap[key] < peak) peak = pMap[key];
+      if (pm[key] < peak) peak = pm[key];
     }
   }
   return { woc, peak };
 }
-
-let i = 2;
-
-function render() {
-  const w = weeks[i];
-  document.getElementById("dateLabel").innerText = "week of " + w;
-  document.getElementById("prevBtn").disabled = i === 0;
-  document.getElementById("nextBtn").disabled = i === weeks.length - 1;
-
-  const el = document.getElementById("chart");
-  el.innerHTML = "";
-
-  const list = data[w];
-  const prev = i > 0 ? data[weeks[i - 1]] : null;
-  const pm = prev ? pos(prev) : null;
-
-  for (let n = 0; n < list.length; n++) {
-    const s = list[n];
-    const key = id(s);
-    const currentPos = n + 1;
-
-    let m = move(pm, key, currentPos);
-    let mvCls = "movement";
-    if (m.startsWith("↑")) mvCls += " up";
-    else if (m.startsWith("↓")) mvCls += " down";
-    else if (m === "NEW") mvCls += " new";
-    else mvCls += " same";
-
-    const { woc, peak } = wocAndPeak(key, i);
-
-    const row = document.createElement("div");
-    row.className = "row" + (currentPos === 1 ? " top1" : currentPos === 2 ? " top2" : currentPos === 3 ? " top3" : "");
+ 
+// ---- RENDER CHART ----
+function renderChart(slug) {
+  const slugIdx = sortedSlugs.indexOf(slug);
+  const list = WEEKS[slug];
+  const el = document.getElementById('chart');
+ 
+  if (!list) {
+    el.innerHTML = `<div class="not-found">
+      <div class="emoji">📭</div>
+      <h2>No chart for this week!</h2>
+      <p>Check back when this week's chart drops.</p>
+    </div>`;
+    document.getElementById('dateLabel').innerText = slug;
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+    return;
+  }
+ 
+  document.getElementById('dateLabel').innerText = 'week of ' + fmtSlug(slug);
+  document.getElementById('prevBtn').disabled = slugIdx <= 0;
+  document.getElementById('nextBtn').disabled = slugIdx >= sortedSlugs.length - 1;
+ 
+  const prevSlug = slugIdx > 0 ? sortedSlugs[slugIdx - 1] : null;
+  const pm = prevSlug ? posMap(WEEKS[prevSlug]) : null;
+ 
+  el.innerHTML = '';
+  list.forEach((s, n) => {
+    const key = songId(s);
+    const cur = n + 1;
+    let m = movement(pm, key, cur);
+    let mvCls = 'movement';
+    if (m.startsWith('↑')) mvCls += ' up';
+    else if (m.startsWith('↓')) mvCls += ' down';
+    else if (m === 'NEW') mvCls += ' new';
+    else mvCls += ' same';
+ 
+    const { woc, peak } = wocAndPeak(key, slugIdx);
+    const topCls = cur === 1 ? ' top1' : cur === 2 ? ' top2' : cur === 3 ? ' top3' : '';
+ 
+    const row = document.createElement('div');
+    row.className = 'row' + topCls;
     row.innerHTML = `
       <div class="rank-cell">
-        <div class="rank">${currentPos}</div>
+        <div class="rank">${cur}</div>
         <div class="${mvCls}">${m}</div>
       </div>
       <div class="cover"><img src="${s.c}" alt=""></div>
@@ -458,11 +669,85 @@ function render() {
       <div class="peak">${peak}</div>
     `;
     el.appendChild(row);
+  });
+}
+ 
+function navWeek(dir) {
+  const cur = getSlugFromURL();
+  const idx = sortedSlugs.indexOf(cur);
+  const next = sortedSlugs[idx + dir];
+  if (next) navigateTo(next);
+}
+ 
+// ---- CALENDAR ----
+const MONTH_NAMES = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+ 
+let calYear, calMonth;
+ 
+function initCal(slug) {
+  const d = slugToDate(slug);
+  calYear = d.getFullYear();
+  calMonth = d.getMonth();
+}
+ 
+function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(getSlugFromURL()); }
+function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0;  calYear++; } renderCalendar(getSlugFromURL()); }
+ 
+function renderCalendar(activeSlug) {
+  document.getElementById('calMonthLabel').innerText = MONTH_NAMES[calMonth] + ' ' + calYear;
+ 
+  // build set of chart dates for quick lookup
+  const chartDates = new Set(sortedSlugs);
+ 
+  const firstDay = new Date(calYear, calMonth, 1);
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  // Monday=0 offset
+  let startOffset = firstDay.getDay() - 1;
+  if (startOffset < 0) startOffset = 6;
+ 
+  const cells = document.getElementById('calCells');
+  cells.innerHTML = '';
+ 
+  // blank spacers
+  for (let s = 0; s < startOffset; s++) {
+    const sp = document.createElement('div');
+    sp.className = 'cal-cell empty';
+    cells.appendChild(sp);
+  }
+ 
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    const mm = String(calMonth + 1).padStart(2, '0');
+    const dd = String(d).padStart(2, '0');
+    const slug = `${calYear}-${mm}-${dd}`;
+ 
+    const isToday = (today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d);
+    const hasChart = chartDates.has(slug);
+    const isActive = slug === activeSlug;
+ 
+    let cls = 'cal-cell';
+    if (hasChart) cls += ' has-chart';
+    if (isToday)  cls += ' today';
+    if (isActive) cls += ' active';
+ 
+    cell.className = cls;
+    cell.textContent = d;
+ 
+    if (hasChart) {
+      cell.title = 'Chart: ' + fmtSlug(slug);
+      cell.addEventListener('click', () => navigateTo(slug));
+    }
+ 
+    cells.appendChild(cell);
   }
 }
-
-function changeWeek(d) { i += d; render(); }
-render();
+ 
+// ---- INIT ----
+const initSlug = getSlugFromURL();
+initCal(initSlug);
+renderChart(initSlug);
+renderCalendar(initSlug);
 </script>
 </body>
 </html>
