@@ -1,386 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Talk of the Personal Charts</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Nunito', Arial, sans-serif;
-  background-color: #ffe4f0;
-  background-image:
-    radial-gradient(circle, #ff9ed2 1px, transparent 1px),
-    radial-gradient(circle, #ffb3e0 1px, transparent 1px);
-  background-size: 28px 28px, 14px 14px;
-  background-position: 0 0, 7px 7px;
-  min-height: 100vh;
-  color: #1a0533;
-}
-
-/* HEADER */
-header {
-  background: #7c3aed;
-  border-bottom: 4px solid #4c1d95;
-  padding: 0 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 62px;
-}
-
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
-
-.logo-img {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 2px solid #c4b5fd;
-  object-fit: cover;
-}
-
-.logo-text {
-  font-family: 'Fredoka One', cursive;
-  font-size: 20px;
-  color: #fff;
-  letter-spacing: 0.5px;
-}
-
-.header-badge {
-  background: #f0abfc;
-  color: #4c1d95;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 2px solid #d946ef;
-}
-
-/* TICKER */
-.ticker-wrap {
-  background: #4c1d95;
-  border-bottom: 3px solid #3b0764;
-  overflow: hidden;
-  white-space: nowrap;
-  padding: 7px 0;
-  position: relative;
-}
-
-.ticker-wrap::before,
-.ticker-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 60px;
-  z-index: 2;
-  pointer-events: none;
-}
-.ticker-wrap::before { left: 0;  background: linear-gradient(to right, #4c1d95, transparent); }
-.ticker-wrap::after  { right: 0; background: linear-gradient(to left,  #4c1d95, transparent); }
-
-.ticker-track {
-  display: inline-flex;
-  animation: ticker 30s linear infinite;
-}
-.ticker-track:hover { animation-play-state: paused; }
-
-@keyframes ticker {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-.ticker-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 30px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #e9d5ff;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.ticker-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #c084fc;
-  flex-shrink: 0;
-}
-
-/* HERO */
-.hero {
-  text-align: center;
-  padding: 44px 20px 32px;
-}
-
-.hero h1 {
-  font-family: 'Fredoka One', cursive;
-  font-size: clamp(32px, 5vw, 52px);
-  color: #4c1d95;
-  text-shadow: 3px 3px 0 #c084fc;
-  margin-bottom: 10px;
-  line-height: 1.1;
-}
-
-.hero p {
-  font-size: 15px;
-  font-weight: 600;
-  color: #6d28d9;
-}
-
-/* SECTION LABEL */
-.section-label {
-  max-width: 900px;
-  margin: 0 auto 16px;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.section-label span {
-  font-family: 'Fredoka One', cursive;
-  font-size: 18px;
-  color: #7c3aed;
-}
-
-.section-line {
-  flex: 1;
-  height: 2px;
-  background: repeating-linear-gradient(90deg, #c084fc 0, #c084fc 6px, transparent 6px, transparent 12px);
-}
-
-/* GRID */
-.grid-wrap {
-  max-width: 900px;
-  margin: 0 auto 32px;
-  padding: 0 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-/* CARD */
-.card {
-  background: #fff;
-  border: 3px solid #7c3aed;
-  border-radius: 16px;
-  padding: 18px 16px;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  position: relative;
-  box-shadow: 4px 4px 0 #4c1d95;
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.card:not(.empty):hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #4c1d95;
-}
-
-.card:not(.empty):active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 #4c1d95;
-}
-
-.card-inner {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-
-.pfp {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  border: 2px solid #e9d5ff;
-  object-fit: cover;
-  background: #f3e8ff;
-  flex-shrink: 0;
-}
-
-.card-info { flex: 1; min-width: 0; }
-
-.card-name {
-  font-family: 'Fredoka One', cursive;
-  font-size: 16px;
-  color: #4c1d95;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card-no1-label {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #d946ef;
-  margin-bottom: 2px;
-}
-
-.card-song {
-  font-size: 12px;
-  font-weight: 600;
-  color: #7c3aed;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card-arrow {
-  width: 26px;
-  height: 26px;
-  background: #7c3aed;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.card-arrow svg {
-  width: 13px;
-  height: 13px;
-  stroke: #fff;
-  fill: none;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.card.empty {
-  border-color: #ddd6fe;
-  box-shadow: 4px 4px 0 #ddd6fe;
-  opacity: 0.55;
-  cursor: default;
-}
-.card.empty .card-name { color: #a78bfa; }
-.card.empty .card-song { color: #c4b5fd; }
-
-/* NEWSLETTER TEASER */
-.newsletter-teaser-wrap {
-  max-width: 900px;
-  margin: 0 auto 50px;
-  padding: 0 20px;
-}
-
-.newsletter-teaser {
-  background: white;
-  border: 3px solid #7c3aed;
-  border-radius: 16px;
-  box-shadow: 4px 4px 0 #4c1d95;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 22px;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.1s, box-shadow 0.1s;
-  gap: 16px;
-}
-
-.newsletter-teaser:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #4c1d95;
-}
-
-.newsletter-teaser:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 #4c1d95;
-}
-
-.nl-teaser-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.nl-teaser-emoji {
-  font-size: 28px;
-  line-height: 1;
-}
-
-.nl-teaser-title {
-  font-family: 'Fredoka One', cursive;
-  font-size: 18px;
-  color: #4c1d95;
-  margin-bottom: 2px;
-}
-
-.nl-teaser-sub {
-  font-size: 12px;
-  font-weight: 600;
-  color: #a78bfa;
-}
-
-.nl-latest-badge {
-  background: #fef3c7;
-  border: 2px solid #f59e0b;
-  color: #92400e;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
-  margin-left: auto;
-}
-
-.nl-teaser-arrow {
-  width: 30px;
-  height: 30px;
-  background: #7c3aed;
-  border-radius: 50%;
-  border: 2px solid #4c1d95;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.nl-teaser-arrow svg {
-  width: 13px;
-  height: 13px;
-  stroke: #fff;
-  fill: none;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* FOOTER */
-footer {
-  border-top: 3px solid #7c3aed;
-  background: #4c1d95;
-  padding: 16px 28px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #c4b5fd;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',Arial,sans-serif;background-color:#ffe4f0;background-image:radial-gradient(circle,#ff9ed2 1px,transparent 1px),radial-gradient(circle,#ffb3e0 1px,transparent 1px);background-size:28px 28px,14px 14px;background-position:0 0,7px 7px;min-height:100vh;color:#1a0533}
+header{background:#7c3aed;border-bottom:4px solid #4c1d95;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo-wrap{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-img{width:34px;height:34px;border-radius:8px;border:2px solid #c4b5fd;object-fit:cover}
+.logo-text{font-family:'Fredoka One',cursive;font-size:18px;color:#fff;letter-spacing:.5px}
+.header-badge{background:#f0abfc;color:#4c1d95;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:999px;border:2px solid #d946ef}
+.ticker-wrap{background:#4c1d95;border-bottom:3px solid #3b0764;overflow:hidden;white-space:nowrap;padding:7px 0;position:relative}
+.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:50px;z-index:2;pointer-events:none}
+.ticker-wrap::before{left:0;background:linear-gradient(to right,#4c1d95,transparent)}
+.ticker-wrap::after{right:0;background:linear-gradient(to left,#4c1d95,transparent)}
+.ticker-track{display:inline-flex;animation:ticker 30s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 28px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#e9d5ff;text-transform:uppercase;white-space:nowrap}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:#c084fc;flex-shrink:0}
+.hero{text-align:center;padding:40px 20px 28px}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(28px,5vw,50px);color:#4c1d95;text-shadow:3px 3px 0 #c084fc;margin-bottom:8px;line-height:1.1}
+.hero p{font-size:14px;font-weight:600;color:#6d28d9}
+.section-label{max-width:860px;margin:0 auto 14px;padding:0 20px;display:flex;align-items:center;gap:12px}
+.section-label span{font-family:'Fredoka One',cursive;font-size:18px;color:#7c3aed;white-space:nowrap}
+.section-line{flex:1;height:2px;background:repeating-linear-gradient(90deg,#c084fc 0,#c084fc 6px,transparent 6px,transparent 12px)}
+.grid-wrap{max-width:860px;margin:0 auto 50px;padding:0 20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:3px solid #7c3aed;border-radius:16px;padding:18px 16px;text-decoration:none;color:inherit;display:block;box-shadow:4px 4px 0 #4c1d95;transition:transform .1s,box-shadow .1s}
+.card:not(.empty):hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #4c1d95}
+.card:not(.empty):active{transform:translate(2px,2px);box-shadow:2px 2px 0 #4c1d95}
+.card-inner{display:flex;align-items:center;gap:13px}
+.pfp{width:48px;height:48px;border-radius:10px;border:2px solid #e9d5ff;object-fit:cover;background:#f3e8ff;flex-shrink:0}
+.card-info{flex:1;min-width:0}
+.card-name{font-family:'Fredoka One',cursive;font-size:16px;color:#4c1d95;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-no1-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#d946ef;margin-bottom:2px}
+.card-song{font-size:12px;font-weight:600;color:#7c3aed;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-arrow{width:26px;height:26px;background:#7c3aed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-arrow svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.card.empty{border-color:#ddd6fe;box-shadow:4px 4px 0 #ddd6fe;opacity:.55;cursor:default}
+.card.empty .card-name{color:#a78bfa}
+.card.empty .card-song{color:#c4b5fd}
+footer{border-top:3px solid #7c3aed;background:#4c1d95;padding:14px 28px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c4b5fd}
 </style>
 </head>
 <body>
-
 <header>
   <a class="logo-wrap" href="/">
     <img class="logo-img" src="https://pbs.twimg.com/profile_images/1700256819283656704/tcktqQD5_400x400.jpg" alt="logo">
@@ -388,26 +56,15 @@ footer {
   </a>
   <span class="header-badge">🎵 Weekly</span>
 </header>
-
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-track" id="ticker"></div>
-</div>
-
+<div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
 <div class="hero">
   <h1>What's everyone listening to?</h1>
   <p>Personal music charts, tracked weekly ✨ pick a chartist below!</p>
 </div>
-
-<div class="section-label">
-  <span>Chartists</span>
-  <div class="section-line"></div>
-</div>
-
+<div class="section-label"><span>Chartists</span><div class="section-line"></div></div>
 <div class="grid-wrap">
   <div class="grid">
-
-    <a class="card" href="/rhythm">
+    <a class="card" href="rhythm/index.html">
       <div class="card-inner">
         <img class="pfp" src="rhythm.jpg" alt="Rhythm">
         <div class="card-info">
@@ -415,109 +72,21 @@ footer {
           <div class="card-no1-label">#1 this week</div>
           <div class="card-song">I Follow Rivers — Lykke Li</div>
         </div>
-        <div class="card-arrow">
-          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
     </a>
-
-    <div class="card empty">
-      <div class="card-inner">
-        <img class="pfp" src="" alt="">
-        <div class="card-info">
-          <div class="card-name">Slot 2</div>
-          <div class="card-song">No chart yet</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card empty">
-      <div class="card-inner">
-        <img class="pfp" src="" alt="">
-        <div class="card-info">
-          <div class="card-name">Slot 3</div>
-          <div class="card-song">No chart yet</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card empty">
-      <div class="card-inner">
-        <img class="pfp" src="" alt="">
-        <div class="card-info">
-          <div class="card-name">Slot 4</div>
-          <div class="card-song">No chart yet</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card empty">
-      <div class="card-inner">
-        <img class="pfp" src="" alt="">
-        <div class="card-info">
-          <div class="card-name">Slot 5</div>
-          <div class="card-song">No chart yet</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card empty">
-      <div class="card-inner">
-        <img class="pfp" src="" alt="">
-        <div class="card-info">
-          <div class="card-name">Slot 6</div>
-          <div class="card-song">No chart yet</div>
-        </div>
-      </div>
-    </div>
-
+    <div class="card empty"><div class="card-inner"><img class="pfp" src="" alt=""><div class="card-info"><div class="card-name">Slot 2</div><div class="card-song">No chart yet</div></div></div></div>
+    <div class="card empty"><div class="card-inner"><img class="pfp" src="" alt=""><div class="card-info"><div class="card-name">Slot 3</div><div class="card-song">No chart yet</div></div></div></div>
+    <div class="card empty"><div class="card-inner"><img class="pfp" src="" alt=""><div class="card-info"><div class="card-name">Slot 4</div><div class="card-song">No chart yet</div></div></div></div>
+    <div class="card empty"><div class="card-inner"><img class="pfp" src="" alt=""><div class="card-info"><div class="card-name">Slot 5</div><div class="card-song">No chart yet</div></div></div></div>
+    <div class="card empty"><div class="card-inner"><img class="pfp" src="" alt=""><div class="card-info"><div class="card-name">Slot 6</div><div class="card-song">No chart yet</div></div></div></div>
   </div>
 </div>
-
-<!-- NEWSLETTER TEASER -->
-<div class="section-label">
-  <span>Newsletter</span>
-  <div class="section-line"></div>
-</div>
-
-<div class="newsletter-teaser-wrap">
-  <a class="newsletter-teaser" href="/newsletter">
-    <div class="nl-teaser-left">
-      <span class="nl-teaser-emoji">📰</span>
-      <div>
-        <div class="nl-teaser-title">The Weekly Rundown</div>
-        <div class="nl-teaser-sub">Chart news, hot takes &amp; weekly highlights</div>
-      </div>
-    </div>
-    <span class="nl-latest-badge">✨ Latest: 3 June 2026</span>
-    <div class="nl-teaser-arrow">
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-  </a>
-</div>
-
 <footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
-
 <script>
-// TICKER
-const messages = [
-  "Not officially affiliated with Talk Of The Charts",
-  "Estd. 2026",
-  "Reach out to add your chart!",
-  "Stream hate that i made you love me!",
-  "Currently archiving ONE person's chart"
-];
-
-const track = document.getElementById('ticker');
-// duplicate for seamless loop
-const all = [...messages, ...messages, ...messages, ...messages];
-all.forEach(msg => {
-  const item = document.createElement('span');
-  item.className = 'ticker-item';
-  item.innerHTML = `<span class="ticker-dot"></span>${msg}<span class="ticker-dot"></span>`;
-  track.appendChild(item);
-});
+const msgs=["Not officially affiliated with Talk Of The Charts","Estd. 2026","Reach out to add your chart!","Currently archiving ONE person's chart"];
+const track=document.getElementById('ticker');
+[...msgs,...msgs,...msgs,...msgs].forEach(m=>{const s=document.createElement('span');s.className='ticker-item';s.innerHTML=`<span class="ticker-dot"></span>${m}<span class="ticker-dot"></span>`;track.appendChild(s)});
 </script>
-
 </body>
 </html>
