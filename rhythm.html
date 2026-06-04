@@ -1,753 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rhythm's Chart</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rhythm — Talk of the Personal Charts</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',Arial,sans-serif;background-color:#ffe4f0;background-image:radial-gradient(circle,#ff9ed2 1px,transparent 1px),radial-gradient(circle,#ffb3e0 1px,transparent 1px);background-size:28px 28px,14px 14px;background-position:0 0,7px 7px;min-height:100vh;color:#1a0533}
+header{background:#7c3aed;border-bottom:4px solid #4c1d95;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:62px}
+.back-link{font-family:'Fredoka One',cursive;font-size:14px;color:#c4b5fd;text-decoration:none;display:flex;align-items:center;gap:6px}
+.back-link:hover{color:#fff}
+.header-title{font-family:'Fredoka One',cursive;font-size:20px;color:#fff}
+.header-right{width:80px}
+.ticker-wrap{background:#4c1d95;border-bottom:3px solid #3b0764;overflow:hidden;white-space:nowrap;padding:7px 0;position:relative}
+.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:50px;z-index:2;pointer-events:none}
+.ticker-wrap::before{left:0;background:linear-gradient(to right,#4c1d95,transparent)}
+.ticker-wrap::after{right:0;background:linear-gradient(to left,#4c1d95,transparent)}
+.ticker-track{display:inline-flex;animation:ticker 30s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 28px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#e9d5ff;text-transform:uppercase;white-space:nowrap}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:#c084fc;flex-shrink:0}
  
-    body {
-      font-family: 'Nunito', Arial, sans-serif;
-      background-color: #ffe4f0;
-      background-image:
-        radial-gradient(circle, #ff9ed2 1px, transparent 1px),
-        radial-gradient(circle, #ffb3e0 1px, transparent 1px);
-      background-size: 28px 28px, 14px 14px;
-      background-position: 0 0, 7px 7px;
-      min-height: 100vh;
-      color: #1a0533;
-    }
+/* PROFILE HERO */
+.profile-hero{text-align:center;padding:40px 20px 32px}
+.profile-avatar{width:90px;height:90px;border-radius:20px;border:4px solid #7c3aed;box-shadow:4px 4px 0 #4c1d95;object-fit:cover;background:#f3e8ff;margin:0 auto 16px}
+.profile-name{font-family:'Fredoka One',cursive;font-size:clamp(28px,5vw,44px);color:#4c1d95;text-shadow:3px 3px 0 #c084fc;margin-bottom:6px}
+.profile-sub{font-size:13px;font-weight:600;color:#7c3aed}
+.profile-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.badge{background:#fff;border:2px solid #c4b5fd;border-radius:999px;padding:4px 12px;font-size:11px;font-weight:800;color:#4c1d95;text-transform:uppercase;letter-spacing:.06em}
  
-    /* HEADER */
-    header {
-      background: #7c3aed;
-      border-bottom: 4px solid #4c1d95;
-      padding: 0 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 62px;
-    }
-    .back-link {
-      font-family: 'Fredoka One', cursive;
-      font-size: 14px;
-      color: #c4b5fd;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .back-link:hover { color: #fff; }
-    .header-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 22px;
-      color: #fff;
-    }
-    .header-right { width: 80px; }
+/* NAV CARDS */
+.section-label{max-width:700px;margin:0 auto 14px;padding:0 20px;display:flex;align-items:center;gap:12px}
+.section-label span{font-family:'Fredoka One',cursive;font-size:18px;color:#7c3aed;white-space:nowrap}
+.section-line{flex:1;height:2px;background:repeating-linear-gradient(90deg,#c084fc 0,#c084fc 6px,transparent 6px,transparent 12px)}
+.nav-wrap{max-width:700px;margin:0 auto 60px;padding:0 20px;display:flex;flex-direction:column;gap:14px}
  
-    /* MAIN LAYOUT: chart + calendar side by side */
-    .page-body {
-      max-width: 1060px;
-      margin: 28px auto 60px;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: 1fr 230px;
-      gap: 20px;
-      align-items: start;
-    }
+.nav-card{background:#fff;border:3px solid #7c3aed;border-radius:16px;padding:20px 22px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:18px;box-shadow:4px 4px 0 #4c1d95;transition:transform .1s,box-shadow .1s}
+.nav-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #4c1d95}
+.nav-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #4c1d95}
+.nav-emoji{font-size:32px;line-height:1;flex-shrink:0}
+.nav-text{flex:1;min-width:0}
+.nav-title{font-family:'Fredoka One',cursive;font-size:20px;color:#4c1d95;margin-bottom:3px}
+.nav-sub{font-size:13px;font-weight:600;color:#a78bfa}
+.nav-meta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.nav-tag{background:#f3e8ff;border:2px solid #ddd6fe;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800;color:#6d28d9}
+.nav-tag.hot{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.nav-arrow{width:32px;height:32px;background:#7c3aed;border-radius:50%;border:2px solid #4c1d95;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-arrow svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
  
-    /* LEFT: topbar + chart */
-    .chart-col {}
- 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-      gap: 12px;
-    }
- 
-    .week-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
- 
-    .week-controls button {
-      padding: 8px 16px;
-      border: 3px solid #4c1d95;
-      border-radius: 10px;
-      background: #7c3aed;
-      color: white;
-      font-family: 'Nunito', sans-serif;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 3px 3px 0 #4c1d95;
-      transition: transform 0.1s, box-shadow 0.1s;
-    }
-    .week-controls button:hover:not(:disabled) {
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0 #4c1d95;
-    }
-    .week-controls button:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0 #4c1d95;
-    }
-    .week-controls button:disabled {
-      background: #c4b5fd;
-      border-color: #a78bfa;
-      box-shadow: 3px 3px 0 #a78bfa;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
- 
-    .date-bubble {
-      background: #4c1d95;
-      color: #f0e6ff;
-      font-family: 'Fredoka One', cursive;
-      font-size: 15px;
-      padding: 8px 20px;
-      border-radius: 999px;
-      border: 3px solid #7c3aed;
-    }
- 
-    /* CHART BOX */
-    .chart-box {
-      background: white;
-      border: 3px solid #7c3aed;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 5px 5px 0 #4c1d95;
-    }
- 
-    .chart-header {
-      display: grid;
-      grid-template-columns: 100px 64px 1fr 72px 72px;
-      align-items: center;
-      padding: 10px 14px;
-      background: #7c3aed;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #e9d5ff;
-    }
-    .chart-header div:nth-child(4),
-    .chart-header div:nth-child(5) { text-align: center; }
- 
-    .row {
-      display: grid;
-      grid-template-columns: 100px 64px 1fr 72px 72px;
-      align-items: center;
-      padding: 9px 14px;
-      border-bottom: 2px solid #f3e8ff;
-      transition: background 0.12s;
-    }
-    .row:last-child { border-bottom: none; }
-    .row:nth-child(odd)  { background: #faf5ff; }
-    .row:nth-child(even) { background: #fff; }
-    .row:hover { background: #f0e6ff; }
-    .row.top1 { background: #fef9c3 !important; }
-    .row.top2 { background: #f0fdf4 !important; }
-    .row.top3 { background: #fff7ed !important; }
-    .row.top1:hover { background: #fef08a !important; }
-    .row.top2:hover { background: #dcfce7 !important; }
-    .row.top3:hover { background: #ffedd5 !important; }
- 
-    .rank-cell {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .rank {
-      font-family: 'Fredoka One', cursive;
-      font-size: 20px;
-      color: #4c1d95;
-      min-width: 30px;
-      text-align: right;
-    }
-    .row.top1 .rank { color: #854d0e; font-size: 22px; }
-    .row.top2 .rank { color: #166534; font-size: 21px; }
-    .row.top3 .rank { color: #9a3412; font-size: 21px; }
- 
-    .movement { font-size: 11px; font-weight: 800; white-space: nowrap; }
-    .up   { color: #16a34a; }
-    .down { color: #dc2626; }
-    .new  { color: #7c3aed; }
-    .same { color: #a78bfa; }
- 
-    .cover img {
-      width: 46px; height: 46px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #ddd6fe;
-      background: #f3e8ff;
-      display: block;
-    }
-    .song { display: flex; flex-direction: column; gap: 2px; padding-left: 2px; }
-    .title  { font-weight: 800; font-size: 14px; color: #1a0533; }
-    .artist { font-size: 12px; font-weight: 600; color: #7c3aed; }
-    .woc  { text-align: center; font-size: 13px; font-weight: 700; color: #6d28d9; }
-    .peak { text-align: center; font-family: 'Fredoka One', cursive; font-size: 15px; color: #4c1d95; }
- 
-    /* 404 state */
-    .not-found {
-      padding: 60px 20px;
-      text-align: center;
-    }
-    .not-found .emoji { font-size: 48px; margin-bottom: 16px; }
-    .not-found h2 {
-      font-family: 'Fredoka One', cursive;
-      font-size: 26px;
-      color: #4c1d95;
-      margin-bottom: 8px;
-    }
-    .not-found p { font-size: 14px; font-weight: 600; color: #a78bfa; }
- 
-    /* RIGHT: CALENDAR */
-    .calendar-col {
-      position: sticky;
-      top: 20px;
-    }
- 
-    .calendar-box {
-      background: white;
-      border: 3px solid #7c3aed;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 4px 4px 0 #4c1d95;
-    }
- 
-    .calendar-header {
-      background: #7c3aed;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
- 
-    .cal-nav {
-      background: none;
-      border: 2px solid #c4b5fd;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      padding: 2px 8px;
-      font-family: 'Nunito', sans-serif;
-      transition: background 0.15s;
-    }
-    .cal-nav:hover { background: rgba(255,255,255,0.15); }
- 
-    .cal-month-label {
-      font-family: 'Fredoka One', cursive;
-      font-size: 15px;
-      color: #fff;
-    }
- 
-    .calendar-grid {
-      padding: 10px 10px 12px;
-    }
- 
-    .cal-days-header {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      margin-bottom: 4px;
-    }
-    .cal-day-name {
-      text-align: center;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #a78bfa;
-      padding: 4px 0;
-    }
- 
-    .cal-cells {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
-    }
- 
-    .cal-cell {
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #ccc;
-      position: relative;
-    }
- 
-    /* has a chart entry */
-    .cal-cell.has-chart {
-      background: #ede9fe;
-      color: #4c1d95;
-      cursor: pointer;
-      border: 2px solid #c4b5fd;
-      transition: background 0.12s, transform 0.1s;
-    }
-    .cal-cell.has-chart:hover {
-      background: #ddd6fe;
-      transform: scale(1.08);
-    }
-    .cal-cell.has-chart.active {
-      background: #7c3aed;
-      color: #fff;
-      border-color: #4c1d95;
-      box-shadow: 2px 2px 0 #4c1d95;
-    }
- 
-    /* today marker */
-    .cal-cell.today:not(.has-chart) {
-      color: #d946ef;
-      font-weight: 800;
-    }
-    .cal-cell.today::after {
-      content: '';
-      position: absolute;
-      bottom: 3px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      background: #d946ef;
-      border-radius: 50%;
-    }
- 
-    /* empty spacer cells */
-    .cal-cell.empty { pointer-events: none; }
- 
-    .calendar-legend {
-      padding: 0 12px 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #a78bfa;
-    }
-    .legend-dot {
-      width: 10px; height: 10px;
-      background: #ede9fe;
-      border: 2px solid #c4b5fd;
-      border-radius: 3px;
-      flex-shrink: 0;
-    }
- 
-    /* footer */
-    footer {
-      border-top: 3px solid #7c3aed;
-      background: #4c1d95;
-      padding: 16px 28px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #c4b5fd;
-    }
-  </style>
+footer{border-top:3px solid #7c3aed;background:#4c1d95;padding:14px 28px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c4b5fd}
+</style>
 </head>
 <body>
- 
 <header>
-  <a class="back-link" href="/">← back</a>
-  <div class="header-title">🎵 Rhythm's Chart</div>
+  <a class="back-link" href="../index.html">← back</a>
+  <div class="header-title">🎵 Rhythm</div>
   <div class="header-right"></div>
 </header>
+<div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
  
-<div class="page-body">
- 
-  <!-- LEFT: chart -->
-  <div class="chart-col">
-    <div class="topbar">
-      <div class="week-controls">
-        <button id="prevBtn" onclick="navWeek(-1)">← Prev</button>
-        <button id="nextBtn" onclick="navWeek(1)">Next →</button>
-      </div>
-      <div class="date-bubble" id="dateLabel"></div>
-    </div>
- 
-    <div class="chart-box">
-      <div class="chart-header">
-        <div>#</div>
-        <div></div>
-        <div>Song</div>
-        <div style="text-align:center">WOC</div>
-        <div style="text-align:center">Peak</div>
-      </div>
-      <div id="chart"></div>
-    </div>
+<div class="profile-hero">
+  <img class="profile-avatar" src="../rhythm.jpg" alt="Rhythm">
+  <div class="profile-name">Rhythm</div>
+  <div class="profile-sub">Personal music charts — tracked every week since May 2026</div>
+  <div class="profile-badges">
+    <span class="badge">🗓 3 weeks archived</span>
+    <span class="badge">🎵 40 songs this week</span>
   </div>
+</div>
  
-  <!-- RIGHT: calendar -->
-  <div class="calendar-col">
-    <div class="calendar-box">
-      <div class="calendar-header">
-        <button class="cal-nav" onclick="calPrev()">‹</button>
-        <span class="cal-month-label" id="calMonthLabel"></span>
-        <button class="cal-nav" onclick="calNext()">›</button>
-      </div>
-      <div class="calendar-grid">
-        <div class="cal-days-header">
-          <div class="cal-day-name">Mo</div>
-          <div class="cal-day-name">Tu</div>
-          <div class="cal-day-name">We</div>
-          <div class="cal-day-name">Th</div>
-          <div class="cal-day-name">Fr</div>
-          <div class="cal-day-name">Sa</div>
-          <div class="cal-day-name">Su</div>
-        </div>
-        <div class="cal-cells" id="calCells"></div>
-      </div>
-      <div class="calendar-legend">
-        <div class="legend-dot"></div>
-        Chart available
+<div class="section-label"><span>Pages</span><div class="section-line"></div></div>
+ 
+<div class="nav-wrap">
+ 
+  <a class="nav-card" href="charts.html">
+    <span class="nav-emoji">📊</span>
+    <div class="nav-text">
+      <div class="nav-title">Charts</div>
+      <div class="nav-sub">Weekly ranked chart archive with full history</div>
+      <div class="nav-meta">
+        <span class="nav-tag">3 weeks</span>
+        <span class="nav-tag">Latest: 31 May 2026</span>
       </div>
     </div>
-  </div>
+    <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+  </a>
+ 
+  <a class="nav-card" href="newsletter.html">
+    <span class="nav-emoji">📰</span>
+    <div class="nav-text">
+      <div class="nav-title">Newsletter</div>
+      <div class="nav-sub">Weekly Rundown — hot takes, movers & chart news</div>
+      <div class="nav-meta">
+        <span class="nav-tag">1 issue</span>
+        <span class="nav-tag hot">✨ Latest: 31 May 2026</span>
+      </div>
+    </div>
+    <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+  </a>
+ 
+  <a class="nav-card" href="predictions.html">
+    <span class="nav-emoji">🔮</span>
+    <div class="nav-text">
+      <div class="nav-title">Predictions</div>
+      <div class="nav-sub">Early & late week predictions for the upcoming chart</div>
+      <div class="nav-meta">
+        <span class="nav-tag hot">🔥 Next: 7 Jun 2026</span>
+      </div>
+    </div>
+    <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+  </a>
  
 </div>
  
 <footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
- 
 <script>
-// ============================================================
-//  CHART DATA
-// ============================================================
- 
-const week_2026_05_17 = [
-  {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-  {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
-  {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
-  {t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-  {t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
-  {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
-  {t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
-  {t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
-  {t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
-  {t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
-  {t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
-  {t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
-  {t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
-  {t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
-  {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
-  {t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
-  {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
-  {t:"Hell Of A Life",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d0000b273baf2a68126739ff553f2930a"},
-  {t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-  {t:"Anna Wintour",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyDhTikI0WcG3xPiA9uNnVgjRingDJwVoaSA&s"},
-  {t:"Friday Night",a:"GFOTY",c:"https://images.genius.com/c95081255db8e4cc1baf94ffc911b7c4.1000x1000x1.jpg"},
-  {t:"Cloud 909",a:"Lone",c:"https://f4.bcbits.com/img/a4209000436_10.jpg"},
-  {t:"Kingdom Hearts Key",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-  {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
-  {t:"Hollaback Girl",a:"Gwen Stefani",c:"https://upload.wikimedia.org/wikipedia/en/thumb/b/bb/Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png/250px-Gwen_Stefani_%E2%80%93_Love_Angel_Music_Baby_album_cover.png"}
-];
- 
-const week_2026_05_24 = [
-  {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
-  {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
-  {t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
-  {t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
-  {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
-  {t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
-  {t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
-  {t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
-  {t:"The Sign",a:"Ace Of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
-  {t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
-  {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
-  {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-  {t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
-  {t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
-  {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
-  {t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-  {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
-  {t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
-  {t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
-  {t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
-  {t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-  {t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
-  {t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
-  {t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-  {t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
-  {t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-  {t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-  {t:"Christmas Kids",a:"Roar",c:"https://i.scdn.co/image/ab67616d0000b2737ffa4709d9debeacb9723a56"},
-  {t:"Hacker",a:"Death Grips",c:"https://d1gdi8qinx8x49.cloudfront.net/540x540/83056.jpeg"},
-  {t:"Count Contessa",a:"Azealia Banks",c:"https://i.discogs.com/NCiEjx4w9ocQd-prxo1mHFUMCNPzq4pW7Gy8gxwCr0Y/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NjI1/MjM5LTE1Nzg0MTk1/ODEtNjcyMC5qcGVn.jpeg"}
-];
- 
-const week_2026_05_31 = [
-  {t:"I Follow Rivers",a:"Lykke Li",c:"https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg"},
-  {t:"Vogue",a:"Madonna",c:"https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612"},
-  {t:"Church Girl",a:"Beyoncé",c:"https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png"},
-  {t:"anthems",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-  {t:"Believe",a:"Cher",c:"https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png"},
-  {t:"Liquorice",a:"Azealia Banks",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/ad/Azealia_Banks_-_1991_%28EP%29.png/250px-Azealia_Banks_-_1991_%28EP%29.png"},
-  {t:"Rock Music",a:"Charli xcx",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrAmh23Y9tlKAgaAQxkka-pE1PUyy4veFY0g&s"},
-  {t:"Flourescent Adolescent",a:"Arctic Monkeys",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdo3qsXKrhPxXxNmptTprSPHA7hFv4uTRAJw&s"},
-  {t:"Spring Breakers",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/61YyY3MzhxL.jpg"},
-  {t:"Not Allowed",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-  {t:"Turn it up",a:"PinkPantheress",c:"https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png"},
-  {t:"New Tank",a:"Playboi Carti",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3US_W5XqUphpooUDrf41Mjo6TmM1csc1XwQ&s"},
-  {t:"Blue Hair",a:"TV Girl",c:"https://f4.bcbits.com/img/a4145043828_10.jpg"},
-  {t:"All The Things She Said",a:"t.A.T.u",c:"https://upload.wikimedia.org/wikipedia/en/3/33/Allthethingsshesaid.jpg"},
-  {t:"Playhouse",a:"Azealia Banks",c:"https://static.wikia.nocookie.net/azealia-banks/images/9/9a/Fantaseaii.jpg/revision/latest?cb=20201105220927"},
-  {t:"Luxury",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbL-oi8Q_4TRU5fHFoRVNpXzusqPdhEE2mzg&s"},
-  {t:"The Sign",a:"Ace of Base",c:"https://media.pitchfork.com/photos/654beed15b275861a911c604/1:1/w_3000,h_3000,c_limit/Ace%20of%20Base%20-%20The%20Sign.jpeg"},
-  {t:"no tears left to cry",a:"Ariana Grande",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPhdlp_irqCyB8oZul2Yryk_TboZ6XwjV7KA&s"},
-  {t:"Can't Get You Out Of My Head",a:"Kylie Minogue",c:"https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Kylie_Minogue_-_Fever.png/250px-Kylie_Minogue_-_Fever.png"},
-  {t:"Attracted To You",a:"PinkPantheress",c:"https://images.genius.com/3cbd3baeae063bc87af4447c39bb3932.1000x1000x1.png"},
-  {t:"Internet baby (interlude)",a:"PinkPantheress",c:"https://images.genius.com/d76f9a91ba824b5122be78e9acda99de.1000x1000x1.png"},
-  {t:"hate that I made you love me",a:"Ariana Grande",c:"https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Ariana_Grande_-_Petal.png/250px-Ariana_Grande_-_Petal.png"},
-  {t:"claws",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-  {t:"Fentanyl Tester",a:"JPEGMAFIA",c:"https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Scaring_the_Hoes.webp/250px-Scaring_the_Hoes.webp.png"},
-  {t:"Don't Stop 'Til You Get Enough",a:"Michael Jackson",c:"https://m.media-amazon.com/images/I/812EgYpATnL._UF1000,1000_QL80_.jpg"},
-  {t:"Back That Up To The Beat",a:"Madonna",c:"https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Madonna_-_Back_That_Up_to_the_Beat.png/250px-Madonna_-_Back_That_Up_to_the_Beat.png"},
-  {t:"P.Y.T",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-  {t:"Espresso",a:"Sabrina Carpenter",c:"https://upload.wikimedia.org/wikipedia/en/7/71/Espresso_-_Sabrina_Carpenter.png"},
-  {t:"Taking What's Not Yours",a:"TV Girl",c:"https://yt3.googleusercontent.com/rxK8HWUYphSS-Pcw6vTdM7Vu1N2IkpWyugjEtqw8oQb899syk5uCbLjvuCcI8DJ0LfcOy4qZIm59nt21=w544-h544-l90-rj"},
-  {t:"Talk Talk",a:"Charli xcx",c:"https://media.pitchfork.com/photos/65dfd21824cf8305d775f0cd/master/pass/Charli-XCX-Brat.jpg"},
-  {t:"Good Luck, Babe!",a:"Chappell Roan",c:"https://upload.wikimedia.org/wikipedia/en/2/2c/Chappell_Roan_-_Good_Luck%2C_Babe%21.png"},
-  {t:"pink diamond",a:"Charli xcx",c:"https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg"},
-  {t:"BOUNCE",a:"Charli xcx",c:"https://images.genius.com/55eadb636f5594846d73e703e6fb301d.1000x1000x1.png"},
-  {t:"American Boy",a:"Estelle",c:"https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/American_Boy_UK_Cover.jpg/250px-American_Boy_UK_Cover.jpg"},
-  {t:"Someone New",a:"Hozier",c:"https://images.genius.com/8a1b63b77aab0f702305ce88ecb3555b.1000x1000x1.png"},
-  {t:"Diet Pepsi",a:"Addison Rae",c:"https://media.pitchfork.com/photos/680911e60c3c7e90ea0cf2b7/master/w_1600%2Cc_limit/Addison-Rae.jpeg"},
-  {t:"On Sight",a:"Kanye West",c:"https://i.scdn.co/image/ab67616d00001e021dacfbc31cc873d132958af9"},
-  {t:"Icy Colors Change",a:"Azealia Banks",c:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuSkqa5Z3xZJLG3WLrMl3j8rDEWOs8iVgmLQ&s"},
-  {t:"Beat It",a:"Michael Jackson",c:"https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png"},
-  {t:"Beg For You",a:"Charli xcx",c:"https://upload.wikimedia.org/wikipedia/en/b/bf/Charli_XCX_-_Beg_For_You_%28feat._Rina_Sawayama%29.jpg"}
-];
- 
-// ============================================================
-//  WEEKS REGISTRY
-//  To add a new week: add ONE line here + the data array above.
-//  Everything else (calendar, prev/next, WOC, peak) is automatic.
-// ============================================================
-const WEEKS = {
-  "2026-05-17": week_2026_05_17,
-  "2026-05-24": week_2026_05_24,
-  "2026-05-31": week_2026_05_31,
-  // "2026-06-07": week_2026_06_07,   ← uncomment + add data above to add week 4!
-};
- 
-// ============================================================
-//  ENGINE — nothing below needs touching to add new weeks
-// ============================================================
- 
-// Sorted list of slugs (oldest first)
-const sortedSlugs = Object.keys(WEEKS).sort();
-const today = new Date();
- 
-// Parse slug from hash (#2026-05-17), falling back to most recent week
-function getSlugFromURL() {
-  const hash = window.location.hash.replace('#', '');
-  if (hash && /^\d{4}-\d{2}-\d{2}$/.test(hash) && WEEKS[hash]) return hash;
-  // Also support /rhythm/2026-05-17 path on a real server
-  const parts = window.location.pathname.split('/').filter(Boolean);
-  const last = parts[parts.length - 1];
-  if (last && /^\d{4}-\d{2}-\d{2}$/.test(last) && WEEKS[last]) return last;
-  return sortedSlugs[sortedSlugs.length - 1];
-}
- 
-function slugToDate(slug) {
-  const [y, m, d] = slug.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
- 
-function fmtSlug(slug) {
-  const d = slugToDate(slug);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
-}
- 
-function navigateTo(slug) {
-  // Hash navigation — works in previews, iframes, and real servers
-  window.location.hash = slug;
-  // hashchange fires automatically, but call directly too for same-hash clicks
-  renderChart(slug);
-  renderCalendar(slug);
-}
- 
-// Handle browser back/forward and hash changes
-window.addEventListener('hashchange', () => {
-  const slug = getSlugFromURL();
-  renderChart(slug);
-  renderCalendar(slug);
-});
- 
-// ---- CHART HELPERS ----
-function songId(s) { return s.t + '||' + s.a; }
- 
-function posMap(list) {
-  const m = {};
-  list.forEach((s, i) => m[songId(s)] = i + 1);
-  return m;
-}
- 
-function movement(prevMap, key, cur) {
-  if (!prevMap) return 'NEW';
-  const x = prevMap[key];
-  if (!x) return 'NEW';
-  const d = x - cur;
-  if (d === 0) return '—';
-  return d > 0 ? '↑ ' + d : '↓ ' + Math.abs(d);
-}
- 
-function wocAndPeak(key, slugIdx) {
-  let woc = 0, peak = Infinity;
-  for (let w = 0; w <= slugIdx; w++) {
-    const pm = posMap(WEEKS[sortedSlugs[w]]);
-    if (pm[key] !== undefined) {
-      woc++;
-      if (pm[key] < peak) peak = pm[key];
-    }
-  }
-  return { woc, peak };
-}
- 
-// ---- RENDER CHART ----
-function renderChart(slug) {
-  const slugIdx = sortedSlugs.indexOf(slug);
-  const list = WEEKS[slug];
-  const el = document.getElementById('chart');
- 
-  if (!list) {
-    el.innerHTML = `<div class="not-found">
-      <div class="emoji">📭</div>
-      <h2>No chart for this week!</h2>
-      <p>Check back when this week's chart drops.</p>
-    </div>`;
-    document.getElementById('dateLabel').innerText = slug;
-    document.getElementById('prevBtn').disabled = true;
-    document.getElementById('nextBtn').disabled = true;
-    return;
-  }
- 
-  document.getElementById('dateLabel').innerText = 'week of ' + fmtSlug(slug);
-  document.getElementById('prevBtn').disabled = slugIdx <= 0;
-  document.getElementById('nextBtn').disabled = slugIdx >= sortedSlugs.length - 1;
- 
-  const prevSlug = slugIdx > 0 ? sortedSlugs[slugIdx - 1] : null;
-  const pm = prevSlug ? posMap(WEEKS[prevSlug]) : null;
- 
-  el.innerHTML = '';
-  list.forEach((s, n) => {
-    const key = songId(s);
-    const cur = n + 1;
-    let m = movement(pm, key, cur);
-    let mvCls = 'movement';
-    if (m.startsWith('↑')) mvCls += ' up';
-    else if (m.startsWith('↓')) mvCls += ' down';
-    else if (m === 'NEW') mvCls += ' new';
-    else mvCls += ' same';
- 
-    const { woc, peak } = wocAndPeak(key, slugIdx);
-    const topCls = cur === 1 ? ' top1' : cur === 2 ? ' top2' : cur === 3 ? ' top3' : '';
- 
-    const row = document.createElement('div');
-    row.className = 'row' + topCls;
-    row.innerHTML = `
-      <div class="rank-cell">
-        <div class="rank">${cur}</div>
-        <div class="${mvCls}">${m}</div>
-      </div>
-      <div class="cover"><img src="${s.c}" alt=""></div>
-      <div class="song">
-        <div class="title">${s.t}</div>
-        <div class="artist">${s.a}</div>
-      </div>
-      <div class="woc">${woc}</div>
-      <div class="peak">${peak}</div>
-    `;
-    el.appendChild(row);
-  });
-}
- 
-function navWeek(dir) {
-  const cur = getSlugFromURL();
-  const idx = sortedSlugs.indexOf(cur);
-  const next = sortedSlugs[idx + dir];
-  if (next) navigateTo(next);
-}
- 
-// ---- CALENDAR ----
-const MONTH_NAMES = ['January','February','March','April','May','June',
-                     'July','August','September','October','November','December'];
- 
-let calYear, calMonth;
- 
-function initCal(slug) {
-  const d = slugToDate(slug);
-  calYear = d.getFullYear();
-  calMonth = d.getMonth();
-}
- 
-function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(getSlugFromURL()); }
-function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0;  calYear++; } renderCalendar(getSlugFromURL()); }
- 
-function renderCalendar(activeSlug) {
-  document.getElementById('calMonthLabel').innerText = MONTH_NAMES[calMonth] + ' ' + calYear;
- 
-  // build set of chart dates for quick lookup
-  const chartDates = new Set(sortedSlugs);
- 
-  const firstDay = new Date(calYear, calMonth, 1);
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  // Monday=0 offset
-  let startOffset = firstDay.getDay() - 1;
-  if (startOffset < 0) startOffset = 6;
- 
-  const cells = document.getElementById('calCells');
-  cells.innerHTML = '';
- 
-  // blank spacers
-  for (let s = 0; s < startOffset; s++) {
-    const sp = document.createElement('div');
-    sp.className = 'cal-cell empty';
-    cells.appendChild(sp);
-  }
- 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const cell = document.createElement('div');
-    const mm = String(calMonth + 1).padStart(2, '0');
-    const dd = String(d).padStart(2, '0');
-    const slug = `${calYear}-${mm}-${dd}`;
- 
-    const isToday = (today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d);
-    const hasChart = chartDates.has(slug);
-    const isActive = slug === activeSlug;
- 
-    let cls = 'cal-cell';
-    if (hasChart) cls += ' has-chart';
-    if (isToday)  cls += ' today';
-    if (isActive) cls += ' active';
- 
-    cell.className = cls;
-    cell.textContent = d;
- 
-    if (hasChart) {
-      cell.title = 'Chart: ' + fmtSlug(slug);
-      cell.addEventListener('click', () => navigateTo(slug));
-    }
- 
-    cells.appendChild(cell);
-  }
-}
- 
-// ---- INIT ----
-const initSlug = getSlugFromURL();
-initCal(initSlug);
-renderChart(initSlug);
-renderCalendar(initSlug);
+const msgs=["Not officially affiliated with Talk Of The Charts","Estd. 2026","Reach out to add your chart!","Currently archiving ONE person's chart"];
+const track=document.getElementById('ticker');
+[...msgs,...msgs,...msgs,...msgs].forEach(m=>{const s=document.createElement('span');s.className='ticker-item';s.innerHTML=`<span class="ticker-dot"></span>${m}<span class="ticker-dot"></span>`;track.appendChild(s)});
 </script>
 </body>
 </html>
