@@ -157,19 +157,15 @@ const PRED_WEEKS = [
     early: [
       // ✏️ ADD YOUR EARLY PREDICTIONS HERE (top 5 only)
       // { t: "Song Title", a: "Artist", c: "https://cover-url.jpg", note: "optional comment" },
-      { t: "I Follow Rivers", a: "Lykke Li", c: "https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg", note: "3 weeks at #1, can it stay?" },
-      { t: "Vogue", a: "Madonna", c: "https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612", note: "rising fast" },
-      { t: "anthems", a: "Charli xcx", c: "https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg" },
-      { t: "Believe", a: "Cher", c: "https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png", note: "dark horse" },
+      { t: "Turn it up", a: "PinkPantheress", c: "https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png" },
+      { t: "I Follow Rivers", a: "Lykke Li", c: "https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg" },
+      { t: "anthems", a: "Charli xcx", c: "https://i.scdn.co/image/ab67616d00001e025b8ef3c9b30d307df5245bfa" },
       { t: "Church Girl", a: "Beyoncé", c: "https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png" },
+      { t: "Believe", a: "Cher", c: "https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png", note: "dark horse" },
     ],
     late: [
       // ✏️ ADD YOUR LATE WEEK PREDICTIONS HERE (top 10)
-      { t: "I Follow Rivers", a: "Lykke Li", c: "https://upload.wikimedia.org/wikipedia/en/7/7c/Lykke_Li_-_I_Follow_Rivers_single_cover.jpg" },
-      { t: "Vogue", a: "Madonna", c: "https://i.scdn.co/image/ab67616d0000b27310bf945c50b342020c281612" },
-      { t: "anthems", a: "Charli xcx", c: "https://m.media-amazon.com/images/I/71nnTlQojwL._UF894,1000_QL80_.jpg" },
-      { t: "Believe", a: "Cher", c: "https://upload.wikimedia.org/wikipedia/en/f/f9/Cher_-_Believe.png" },
-      { t: "Church Girl", a: "Beyoncé", c: "https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png" },
+      { t: "Turn it up", a: "PinkPantheress", c: "https://upload.wikimedia.org/wikipedia/en/f/ff/PinkPantheress_-_Turn_it_up.png" },
       // ✏️ slots 6-10 below:
       // { t: "Song", a: "Artist", c: "cover-url" },
     ],
@@ -219,8 +215,8 @@ function buildPredList(entries, maxSlots, type) {
     <div class="pred-box-header">
       <span class="pred-box-emoji">${isEarly ? '🌅' : '🌆'}</span>
       <div class="pred-box-info">
-        <div class="pred-box-title">${isEarly ? 'Early Week Prediction' : 'Late Week Prediction'}</div>
-        <div class="pred-box-sub">Top ${maxSlots} · ${isEarly ? 'Made before midweek' : 'Made with more listening done'}</div>
+        <div class="pred-box-title">${isEarly ? 'Early Week Prediction' : 'Roaming Prediction'}</div>
+        <div class="pred-box-sub">Top ${maxSlots} · ${isEarly ? 'Made before midweek' : 'More and more generated when charts get clearer'}</div>
       </div>
     </div>
     <div class="pred-box-meta">
