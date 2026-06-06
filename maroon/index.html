@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>M5 Weekly — Talk of the Personal Charts</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',Arial,sans-serif;background-color:#fce4ec;background-image:radial-gradient(circle,#f48fb1 1px,transparent 1px),radial-gradient(circle,#f8bbd0 1px,transparent 1px);background-size:28px 28px,14px 14px;background-position:0 0,7px 7px;min-height:100vh;color:#2d0012}
+header{background:#7b1034;border-bottom:4px solid #560d24;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:62px}
+.back-link{font-family:'Fredoka One',cursive;font-size:14px;color:#f48fb1;text-decoration:none;display:flex;align-items:center;gap:6px}
+.back-link:hover{color:#fff}
+.header-title{font-family:'Fredoka One',cursive;font-size:20px;color:#fff}
+.header-right{width:80px}
+.ticker-wrap{background:#560d24;border-bottom:3px solid #3a0818;overflow:hidden;white-space:nowrap;padding:7px 0;position:relative}
+.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:50px;z-index:2;pointer-events:none}
+.ticker-wrap::before{left:0;background:linear-gradient(to right,#560d24,transparent)}
+.ticker-wrap::after{right:0;background:linear-gradient(to left,#560d24,transparent)}
+.ticker-track{display:inline-flex;animation:ticker 30s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 28px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#f8bbd0;text-transform:uppercase;white-space:nowrap}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:#f48fb1;flex-shrink:0}
+.profile-hero{text-align:center;padding:40px 20px 32px}
+.profile-avatar{width:90px;height:90px;border-radius:20px;border:4px solid #7b1034;box-shadow:4px 4px 0 #560d24;object-fit:cover;background:#f8bbd0;margin:0 auto 16px;font-size:48px;display:flex;align-items:center;justify-content:center}
+.profile-name{font-family:'Fredoka One',cursive;font-size:clamp(28px,5vw,44px);color:#7b1034;text-shadow:3px 3px 0 #f48fb1;margin-bottom:6px}
+.profile-sub{font-size:13px;font-weight:600;color:#ad1457}
+.profile-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.badge{background:#fff;border:2px solid #f48fb1;border-radius:999px;padding:4px 12px;font-size:11px;font-weight:800;color:#7b1034;text-transform:uppercase;letter-spacing:.06em}
+.nav-wrap{max-width:500px;margin:0 auto 60px;padding:0 20px}
+.nav-card{background:#fff;border:3px solid #7b1034;border-radius:16px;padding:22px 24px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:18px;box-shadow:4px 4px 0 #560d24;transition:transform .1s,box-shadow .1s}
+.nav-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #560d24}
+.nav-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #560d24}
+.nav-emoji{font-size:34px;line-height:1;flex-shrink:0}
+.nav-text{flex:1}
+.nav-title{font-family:'Fredoka One',cursive;font-size:22px;color:#7b1034;margin-bottom:3px}
+.nav-sub{font-size:13px;font-weight:600;color:#e91e8c}
+.nav-meta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.nav-tag{background:#fce4ec;border:2px solid #f8bbd0;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800;color:#880e4f}
+.nav-arrow{width:32px;height:32px;background:#7b1034;border-radius:50%;border:2px solid #560d24;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-arrow svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+footer{border-top:3px solid #7b1034;background:#560d24;padding:14px 28px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f48fb1}
+</style>
+</head>
+<body>
+<header>
+  <a class="back-link" href="../index.html">← back</a>
+  <div class="header-title">🎵 Maroon Charts</div>
+  <div class="header-right"></div>
+</header>
+<div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
+<div class="profile-hero">
+  <div class="profile-avatar" style="background:#f8bbd0">🎵</div>
+  <div class="profile-name">Maroon Charts</div>
+  <div class="profile-sub">The M5 Weekly — personal music charts, coming soon!</div>
+  <div class="profile-badges">
+    <span class="badge">🗓 M5 Weekly</span>
+    <span class="badge">📊 Charts Coming Soon</span>
+  </div>
+</div>
+<div class="nav-wrap">
+  <a class="nav-card" href="charts.html">
+    <span class="nav-emoji">📊</span>
+    <div class="nav-text">
+      <div class="nav-title">M5 Weekly</div>
+      <div class="nav-sub">Weekly ranked chart archive</div>
+      <div class="nav-meta">
+        <span class="nav-tag">Ready for data</span>
+      </div>
+    </div>
+    <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+  </a>
+</div>
+<footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
+<script>
+const msgs=["Not officially affiliated with Talk Of The Charts","Estd. 2026","Reach out to add your chart!","Currently archiving FOUR people's charts"];
+const track=document.getElementById('ticker');
+[...msgs,...msgs,...msgs,...msgs].forEach(m=>{const s=document.createElement('span');s.className='ticker-item';s.innerHTML=`<span class="ticker-dot"></span>${m}<span class="ticker-dot"></span>`;track.appendChild(s)});
+</script>
+</body>
+</html>
