@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LotTop40 — Charts Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',Arial,sans-serif;background-color:#ffe4f0;background-image:radial-gradient(circle,#ff9ed2 1px,transparent 1px),radial-gradient(circle,#ffb3e0 1px,transparent 1px);background-size:28px 28px,14px 14px;background-position:0 0,7px 7px;min-height:100vh;color:#1a0533}
+header{background:#7c3aed;border-bottom:4px solid #4c1d95;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:62px}
+.back-link{font-family:'Fredoka One',cursive;font-size:14px;color:#c4b5fd;text-decoration:none;display:flex;align-items:center;gap:6px}
+.back-link:hover{color:#fff}
+.header-title{font-family:'Fredoka One',cursive;font-size:20px;color:#fff}
+.header-right{width:80px}
+.page-body{max-width:1060px;margin:24px auto 60px;padding:0 20px;display:grid;grid-template-columns:1fr 230px;gap:20px;align-items:start}
+@media(max-width:720px){.page-body{grid-template-columns:1fr}.calendar-col{position:static!important}}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.week-controls{display:flex;align-items:center;gap:8px}
+.week-controls button{padding:8px 16px;border:3px solid #4c1d95;border-radius:10px;background:#7c3aed;color:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 #4c1d95;transition:transform .1s,box-shadow .1s}
+.week-controls button:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 #4c1d95}
+.week-controls button:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 #4c1d95}
+.week-controls button:disabled{background:#c4b5fd;border-color:#a78bfa;box-shadow:3px 3px 0 #a78bfa;cursor:not-allowed;opacity:.6}
+.date-bubble{background:#4c1d95;color:#f0e6ff;font-family:'Fredoka One',cursive;font-size:14px;padding:7px 18px;border-radius:999px;border:3px solid #7c3aed;text-align:center}
+.chart-box{background:white;border:3px solid #7c3aed;border-radius:16px;overflow:hidden;box-shadow:5px 5px 0 #4c1d95}
+.tip-bar{background:#f3e8ff;border-bottom:2px solid #ddd6fe;padding:8px 14px;font-size:12px;font-weight:700;color:#4c1d95;display:flex;align-items:center;gap:8px}
+.tip-bar span{color:#7c3aed}
+.chart-header{display:grid;grid-template-columns:90px 58px 1fr 62px 62px;align-items:center;padding:9px 14px;background:#7c3aed;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#e9d5ff}
+.chart-header div:nth-child(4),.chart-header div:nth-child(5){text-align:center}
+.row{display:grid;grid-template-columns:90px 58px 1fr 62px 62px;align-items:center;padding:8px 14px;border-bottom:2px solid #f3e8ff;transition:background .12s}
+.row:last-child{border-bottom:none}
+.row:nth-child(odd){background:#faf5ff}
+.row:nth-child(even){background:#fff}
+.row:hover{background:#f0e6ff}
+.row.top1{background:#fef9c3!important}.row.top2{background:#f0fdf4!important}.row.top3{background:#fff7ed!important}
+.row.top1:hover{background:#fef08a!important}.row.top2:hover{background:#dcfce7!important}.row.top3:hover{background:#ffedd5!important}
+.rank-cell{display:flex;align-items:center;gap:4px}
+.rank{font-family:'Fredoka One',cursive;font-size:19px;color:#4c1d95;min-width:28px;text-align:right}
+.row.top1 .rank{color:#854d0e;font-size:21px}.row.top2 .rank{color:#166534;font-size:20px}.row.top3 .rank{color:#9a3412;font-size:20px}
+.movement{font-size:11px;font-weight:800;white-space:nowrap}
+.up{color:#16a34a}.down{color:#dc2626}.new{color:#7c3aed}.same{color:#a78bfa}
+.cover{width:46px;height:46px;border-radius:8px;border:2px solid #ddd6fe;object-fit:cover;background:#f3e8ff;display:block;flex-shrink:0}
+.song{display:flex;flex-direction:column;gap:1px;padding-left:2px;min-width:0}
+.title{font-weight:800;font-size:13px;color:#1a0533;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist{font-size:11px;font-weight:600;color:#7c3aed;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.woc{text-align:center;font-size:12px;font-weight:700;color:#6d28d9}
+.peak{text-align:center;font-family:'Fredoka One',cursive;font-size:14px;color:#4c1d95}
+/* CALENDAR */
+.calendar-col{position:sticky;top:20px}
+.calendar-box{background:white;border:3px solid #7c3aed;border-radius:16px;overflow:hidden;box-shadow:4px 4px 0 #4c1d95}
+.calendar-header{background:#7c3aed;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.cal-nav{background:none;border:2px solid #c4b5fd;border-radius:8px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;padding:2px 8px;font-family:'Nunito',sans-serif;transition:background .15s}
+.cal-nav:hover{background:rgba(255,255,255,.15)}
+.cal-month-label{font-family:'Fredoka One',cursive;font-size:15px;color:#fff}
+.calendar-grid{padding:8px 8px 10px}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:3px}
+.cal-day-name{text-align:center;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#a78bfa;padding:3px 0}
+.cal-cells{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:11px;font-weight:700;color:#ccc}
+.cal-cell.has-chart{background:#ede9fe;color:#4c1d95;cursor:pointer;border:2px solid #c4b5fd;transition:background .12s,transform .1s}
+.cal-cell.has-chart:hover{background:#ddd6fe;transform:scale(1.08)}
+.cal-cell.has-chart.active{background:#7c3aed;color:#fff;border-color:#4c1d95;box-shadow:2px 2px 0 #4c1d95}
+.cal-cell.today:not(.has-chart){color:#d946ef;font-weight:800}
+.cal-cell.today::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:#d946ef;border-radius:50%}
+.cal-cell{position:relative}
+.calendar-legend{padding:0 10px 10px;display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#a78bfa}
+.legend-dot{width:10px;height:10px;background:#ede9fe;border:2px solid #c4b5fd;border-radius:3px;flex-shrink:0}
+/* MOBILE */
+@media(max-width:600px){
+  .chart-header,.row{grid-template-columns:72px 46px 1fr 52px 52px;padding:7px 10px}
+  .rank{font-size:16px;min-width:22px}
+  .cover{width:38px;height:38px}
+  .title{font-size:12px}.artist{font-size:10px}
+  .woc,.peak{font-size:11px}
+}
+@media(max-width:400px){
+  .chart-header div:nth-child(5),.row .peak{display:none}
+  .chart-header,.row{grid-template-columns:72px 46px 1fr 52px}
+}
+footer{border-top:3px solid #7c3aed;background:#4c1d95;padding:14px 28px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c4b5fd}
+</style>
+</head>
+<body>
+<header>
+  <a class="back-link" href="index.html">← back</a>
+  <div class="header-title">📊 LotTop40 Charts</div>
+  <div class="header-right"></div>
+</header>
+<div class="page-body">
+  <div class="chart-col">
+    <div class="topbar">
+      <div class="week-controls">
+        <button id="prevBtn" onclick="navWeek(-1)">← Prev</button>
+        <button id="nextBtn" onclick="navWeek(1)">Next →</button>
+      </div>
+      <div class="date-bubble" id="dateLabel"></div>
+    </div>
+    <div class="chart-box">
+      <div class="tip-bar" id="tipBar"></div>
+      <div class="chart-header">
+        <div>#</div><div></div><div>Song</div>
+        <div style="text-align:center">WOC</div>
+        <div style="text-align:center">Peak</div>
+      </div>
+      <div id="chart"></div>
+    </div>
+  </div>
+  <div class="calendar-col">
+    <div class="calendar-box">
+      <div class="calendar-header">
+        <button class="cal-nav" onclick="calPrev()">‹</button>
+        <span class="cal-month-label" id="calMonthLabel"></span>
+        <button class="cal-nav" onclick="calNext()">›</button>
+      </div>
+      <div class="calendar-grid">
+        <div class="cal-days-header">
+          <div class="cal-day-name">Mo</div><div class="cal-day-name">Tu</div>
+          <div class="cal-day-name">We</div><div class="cal-day-name">Th</div>
+          <div class="cal-day-name">Fr</div><div class="cal-day-name">Sa</div>
+          <div class="cal-day-name">Su</div>
+        </div>
+        <div class="cal-cells" id="calCells"></div>
+      </div>
+      <div class="calendar-legend"><div class="legend-dot"></div>Chart available</div>
+    </div>
+  </div>
+</div>
+<footer>Talk of the Personal Charts &nbsp;·&nbsp; Updated Every Week</footer>
+<script>
+const WEEKS = {
+  '2026-01-04': {week:1,editie:422,label:'Week 1 · Editie 422',tip:'Lost Frequencies, CIEL. & Radio Cargo - Listen To Me',entries:[
+    {pos:1,prev:1,woc:5,a:'Lola Cedès',t:'De Verte'},
+    {pos:2,prev:3,woc:3,a:'Elle Coves',t:'Talk About It'},
+    {pos:3,prev:2,woc:6,a:'Bente',t:'Hoogtevrees'},
+    {pos:4,prev:12,woc:2,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:5,prev:4,woc:4,a:'Kaskade',t:'obvious'},
+    {pos:6,prev:9,woc:3,a:'Seven Lions',t:'Breaking Me'},
+    {pos:7,prev:5,woc:4,a:'Rijck, Cristian D & $hirak',t:'Dans Gewoon'},
+    {pos:8,prev:24,woc:2,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:9,prev:6,woc:8,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:10,prev:15,woc:3,a:'HAEVN',t:'Get Up'},
+    {pos:11,prev:7,woc:9,a:'Tame Impala',t:'My Old Ways'},
+    {pos:12,prev:10,woc:3,a:'Kato ft. Jon',t:'Turn The Lights Off'},
+    {pos:13,prev:8,woc:10,a:'The Chainsmokers',t:'The Cure'},
+    {pos:14,prev:11,woc:11,a:'Seven Lions ft. Lilly Ahlberg',t:'So Far Away'},
+    {pos:15,prev:13,woc:12,a:'David Guetta, Teddy Swims & Tones And I',t:'Gone Gone Gone'},
+    {pos:16,prev:null,woc:1,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:17,prev:14,woc:7,a:'Kaskade',t:'i can\'t make you love me'},
+    {pos:18,prev:17,woc:6,a:'Tiësto & FORS',t:'Bring Me To Life'},
+    {pos:19,prev:18,woc:10,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:20,prev:25,woc:4,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:21,prev:16,woc:11,a:'Bob Moses & CRi',t:'Keep Love Waiting'},
+    {pos:22,prev:19,woc:10,a:'Alesso & SACHA',t:'Destiny'},
+    {pos:23,prev:20,woc:15,a:'The Chainsmokers',t:'Smooth'},
+    {pos:24,prev:null,woc:1,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:25,prev:21,woc:13,a:'Pommelien Thijs',t:'IK MOET GAAN'},
+    {pos:26,prev:23,woc:6,a:'Tinlicker & Hero Baldwin',t:'God In You'},
+    {pos:27,prev:22,woc:15,a:'RAYE',t:'WHERE IS MY HUSBAND!'},
+    {pos:28,prev:36,woc:2,a:'ARTY, ÆON:MODE & MRYN',t:'Taking Me Higher'},
+    {pos:29,prev:32,woc:3,a:'Manse',t:'RIGHT WHERE I WANNA STAY'},
+    {pos:30,prev:29,woc:4,a:'Sam Fender',t:'The Treadmill'},
+    {pos:31,prev:27,woc:10,a:'Martin Garrix & Saksham ft. Scott Quinn',t:'Ain\'t Letting You Down'},
+    {pos:32,prev:31,woc:13,a:'AFROJACK & Aloe Blacc',t:'In My World'},
+    {pos:33,prev:26,woc:8,a:'Cristian D, Rijck & $hirak',t:'Single In De Club'},
+    {pos:34,prev:28,woc:8,a:'Faouzia',t:'DON\'T EVER LEAVE ME'},
+    {pos:35,prev:30,woc:14,a:'Olivia Dean',t:'So Easy'},
+    {pos:36,prev:35,woc:20,a:'Olivia Dean',t:'Man I Need'},
+    {pos:37,prev:34,woc:6,a:'Antoon',t:'Tot Het Eind Van Mij'},
+    {pos:38,prev:null,woc:1,a:'Dasha',t:'Here For The Party'},
+    {pos:39,prev:33,woc:8,a:'RONDÉ',t:'Never Been Better'},
+    {pos:40,prev:37,woc:10,a:'Mensa ft. Henkie T & SRNO',t:'Que Pasa'}
+  ]},
+  '2026-01-11': {week:2,editie:423,label:'Week 2 · Editie 423',tip:'Bruno Mars - I Just Might',entries:[
+    {pos:1,prev:2,woc:4,a:'Elle Coves',t:'Talk About It'},
+    {pos:2,prev:1,woc:6,a:'Lola Cedès',t:'De Verte'},
+    {pos:3,prev:4,woc:3,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:4,prev:3,woc:7,a:'Bente',t:'Hoogtevrees'},
+    {pos:5,prev:6,woc:4,a:'Seven Lions',t:'Breaking Me'},
+    {pos:6,prev:8,woc:3,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:7,prev:5,woc:5,a:'Kaskade',t:'obvious'},
+    {pos:8,prev:16,woc:2,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:9,prev:10,woc:4,a:'HAEVN',t:'Get Up'},
+    {pos:10,prev:9,woc:9,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:11,prev:7,woc:5,a:'Rijck, Cristian D & $hirak',t:'Dans Gewoon'},
+    {pos:12,prev:24,woc:2,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:13,prev:12,woc:4,a:'Kato ft. Jon',t:'Turn The Lights Off'},
+    {pos:14,prev:null,woc:1,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:15,prev:11,woc:10,a:'Tame Impala',t:'My Old Ways'},
+    {pos:16,prev:13,woc:11,a:'The Chainsmokers',t:'The Cure'},
+    {pos:17,prev:20,woc:5,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:18,prev:15,woc:13,a:'David Guetta, Teddy Swims & Tones And I',t:'Gone Gone Gone'},
+    {pos:19,prev:14,woc:12,a:'Seven Lions ft. Lilly Ahlberg',t:'So Far Away'},
+    {pos:20,prev:19,woc:11,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:21,prev:17,woc:8,a:'Kaskade',t:'i can\'t make you love me'},
+    {pos:22,prev:28,woc:3,a:'ARTY, ÆON:MODE & MRYN',t:'Taking Me Higher'},
+    {pos:23,prev:null,woc:1,a:'Mike Williams, Brooks & WHAT EVA',t:'Illusion'},
+    {pos:24,prev:18,woc:7,a:'Tiësto & FORS',t:'Bring Me To Life'},
+    {pos:25,prev:29,woc:4,a:'Manse',t:'RIGHT WHERE I WANNA STAY'},
+    {pos:26,prev:null,woc:1,a:'Tomas Grey',t:'Rumors'},
+    {pos:27,prev:21,woc:12,a:'Bob Moses & CRi',t:'Keep Love Waiting'},
+    {pos:28,prev:23,woc:16,a:'The Chainsmokers',t:'Smooth'},
+    {pos:29,prev:22,woc:11,a:'Alesso & SACHA',t:'Destiny'},
+    {pos:30,prev:25,woc:14,a:'Pommelien Thijs',t:'IK MOET GAAN'},
+    {pos:31,prev:30,woc:5,a:'Sam Fender',t:'The Treadmill'},
+    {pos:32,prev:27,woc:16,a:'RAYE',t:'WHERE IS MY HUSBAND!'},
+    {pos:33,prev:32,woc:14,a:'AFROJACK & Aloe Blacc',t:'In My World'},
+    {pos:34,prev:26,woc:7,a:'Tinlicker & Hero Baldwin',t:'God In You'},
+    {pos:35,prev:38,woc:2,a:'Dasha',t:'Here For The Party'},
+    {pos:36,prev:35,woc:15,a:'Olivia Dean',t:'So Easy'},
+    {pos:37,prev:31,woc:11,a:'Martin Garrix & Saksham ft. Scott Quinn',t:'Ain\'t Letting You Down'},
+    {pos:38,prev:34,woc:9,a:'Faouzia',t:'DON\'T EVER LEAVE ME'},
+    {pos:39,prev:null,woc:1,a:'Steerner & Acid Boys',t:'History'},
+    {pos:40,prev:33,woc:9,a:'Cristian D, Rijck & $hirak',t:'Single In De Club'}
+  ]},
+  '2026-01-18': {week:3,editie:424,label:'Week 3 · Editie 424',tip:'ILLENIUM, Bastille & Dabin - Feel Alive',entries:[
+    {pos:1,prev:3,woc:4,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:2,prev:1,woc:5,a:'Elle Coves',t:'Talk About It'},
+    {pos:3,prev:6,woc:4,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:4,prev:2,woc:7,a:'Lola Cedès',t:'De Verte'},
+    {pos:5,prev:8,woc:3,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:6,prev:12,woc:3,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:7,prev:5,woc:5,a:'Seven Lions',t:'Breaking Me'},
+    {pos:8,prev:4,woc:8,a:'Bente',t:'Hoogtevrees'},
+    {pos:9,prev:14,woc:2,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:10,prev:7,woc:6,a:'Kaskade',t:'obvious'},
+    {pos:11,prev:9,woc:5,a:'HAEVN',t:'Get Up'},
+    {pos:12,prev:26,woc:2,a:'Tomas Grey',t:'Rumors'},
+    {pos:13,prev:10,woc:10,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:14,prev:11,woc:6,a:'Rijck, Cristian D & $hirak',t:'Dans Gewoon'},
+    {pos:15,prev:22,woc:4,a:'ARTY, ÆON:MODE & MRYN',t:'Taking Me Higher'},
+    {pos:16,prev:13,woc:5,a:'Kato ft. Jon',t:'Turn The Lights Off'},
+    {pos:17,prev:23,woc:2,a:'Mike Williams, Brooks & WHAT EVA',t:'Illusion'},
+    {pos:18,prev:17,woc:6,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:19,prev:16,woc:12,a:'The Chainsmokers',t:'The Cure'},
+    {pos:20,prev:15,woc:11,a:'Tame Impala',t:'My Old Ways'},
+    {pos:21,prev:20,woc:12,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:22,prev:null,woc:1,a:'Bruno Mars',t:'I Just Might'},
+    {pos:23,prev:18,woc:14,a:'David Guetta, Teddy Swims & Tones And I',t:'Gone Gone Gone'},
+    {pos:24,prev:25,woc:5,a:'Manse',t:'RIGHT WHERE I WANNA STAY'},
+    {pos:25,prev:null,woc:1,a:'Robin Schulz',t:'Embers'},
+    {pos:26,prev:19,woc:13,a:'Seven Lions ft. Lilly Ahlberg',t:'So Far Away'},
+    {pos:27,prev:21,woc:9,a:'Kaskade',t:'i can\'t make you love me'},
+    {pos:28,prev:35,woc:3,a:'Dasha',t:'Here For The Party'},
+    {pos:29,prev:null,woc:1,a:'YOASOBI',t:'アドレナ'},
+    {pos:30,prev:24,woc:8,a:'Tiësto & FORS',t:'Bring Me To Life'},
+    {pos:31,prev:28,woc:17,a:'The Chainsmokers',t:'Smooth'},
+    {pos:32,prev:27,woc:13,a:'Bob Moses & CRi',t:'Keep Love Waiting'},
+    {pos:33,prev:null,woc:1,a:'Luke Combs',t:'Sleepless in a Hotel Room'},
+    {pos:34,prev:33,woc:15,a:'AFROJACK & Aloe Blacc',t:'In My World'},
+    {pos:35,prev:30,woc:15,a:'Pommelien Thijs',t:'IK MOET GAAN'},
+    {pos:36,prev:39,woc:2,a:'Steerner & Acid Boys',t:'History'},
+    {pos:37,prev:31,woc:6,a:'Sam Fender',t:'The Treadmill'},
+    {pos:38,prev:29,woc:12,a:'Alesso & SACHA',t:'Destiny'},
+    {pos:39,prev:32,woc:17,a:'RAYE',t:'WHERE IS MY HUSBAND!'},
+    {pos:40,prev:null,woc:1,a:'DJ Licious ft. SEM',t:'Almost Gone'}
+  ]},
+  '2026-01-25': {week:4,editie:425,label:'Week 4 · Editie 425',tip:'Harry Styles - Aperture',entries:[
+    {pos:1,prev:3,woc:5,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:2,prev:1,woc:5,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:3,prev:2,woc:6,a:'Elle Coves',t:'Talk About It'},
+    {pos:4,prev:5,woc:4,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:5,prev:6,woc:4,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:6,prev:4,woc:8,a:'Lola Cedès',t:'De Verte'},
+    {pos:7,prev:12,woc:3,a:'Tomas Grey',t:'Rumors'},
+    {pos:8,prev:9,woc:3,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:9,prev:7,woc:6,a:'Seven Lions',t:'Breaking Me'},
+    {pos:10,prev:8,woc:9,a:'Bente',t:'Hoogtevrees'},
+    {pos:11,prev:null,woc:1,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:12,prev:10,woc:7,a:'Kaskade',t:'obvious'},
+    {pos:13,prev:null,woc:1,a:'Alice Merton',t:'Visions'},
+    {pos:14,prev:11,woc:6,a:'HAEVN',t:'Get Up'},
+    {pos:15,prev:22,woc:2,a:'Bruno Mars',t:'I Just Might'},
+    {pos:16,prev:13,woc:11,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:17,prev:29,woc:2,a:'YOASOBI',t:'アドレナ'},
+    {pos:18,prev:15,woc:5,a:'ARTY, ÆON:MODE & MRYN',t:'Taking Me Higher'},
+    {pos:19,prev:18,woc:7,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:20,prev:17,woc:3,a:'Mike Williams, Brooks & WHAT EVA',t:'Illusion'},
+    {pos:21,prev:14,woc:7,a:'Rijck, Cristian D & $hirak',t:'Dans Gewoon'},
+    {pos:22,prev:19,woc:13,a:'The Chainsmokers',t:'The Cure'},
+    {pos:23,prev:25,woc:2,a:'Robin Schulz',t:'Embers'},
+    {pos:24,prev:21,woc:13,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:25,prev:16,woc:6,a:'Kato ft. Jon',t:'Turn The Lights Off'},
+    {pos:26,prev:20,woc:12,a:'Tame Impala',t:'My Old Ways'},
+    {pos:27,prev:28,woc:4,a:'Dasha',t:'Here For The Party'},
+    {pos:28,prev:24,woc:6,a:'Manse',t:'RIGHT WHERE I WANNA STAY'},
+    {pos:29,prev:23,woc:15,a:'David Guetta, Teddy Swims & Tones And I',t:'Gone Gone Gone'},
+    {pos:30,prev:27,woc:10,a:'Kaskade',t:'i can\'t make you love me'},
+    {pos:31,prev:33,woc:2,a:'Luke Combs',t:'Sleepless in a Hotel Room'},
+    {pos:32,prev:26,woc:14,a:'Seven Lions ft. Lilly Ahlberg',t:'So Far Away'},
+    {pos:33,prev:40,woc:2,a:'DJ Licious ft. SEM',t:'Almost Gone'},
+    {pos:34,prev:31,woc:18,a:'The Chainsmokers',t:'Smooth'},
+    {pos:35,prev:34,woc:16,a:'AFROJACK & Aloe Blacc',t:'In My World'},
+    {pos:36,prev:32,woc:14,a:'Bob Moses & CRi',t:'Keep Love Waiting'},
+    {pos:37,prev:null,woc:1,a:'Antoon',t:'Van God Los'},
+    {pos:38,prev:36,woc:3,a:'Steerner & Acid Boys',t:'History'},
+    {pos:39,prev:35,woc:16,a:'Pommelien Thijs',t:'IK MOET GAAN'},
+    {pos:40,prev:39,woc:18,a:'RAYE',t:'WHERE IS MY HUSBAND!'}
+  ]},
+  '2026-02-01': {week:5,editie:426,label:'Week 5 · Editie 426',tip:'FLEMMING & Hardwell - Zonder Jou',entries:[
+    {pos:1,prev:11,woc:2,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:2,prev:13,woc:2,a:'Alice Merton',t:'Visions'},
+    {pos:3,prev:1,woc:6,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:4,prev:2,woc:6,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:5,prev:3,woc:7,a:'Elle Coves',t:'Talk About It'},
+    {pos:6,prev:4,woc:5,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:7,prev:5,woc:5,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:8,prev:7,woc:4,a:'Tomas Grey',t:'Rumors'},
+    {pos:9,prev:6,woc:9,a:'Lola Cedès',t:'De Verte'},
+    {pos:10,prev:8,woc:4,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:11,prev:9,woc:7,a:'Seven Lions',t:'Breaking Me'},
+    {pos:12,prev:null,woc:1,a:'Harry Styles',t:'Aperture'},
+    {pos:13,prev:10,woc:10,a:'Bente',t:'Hoogtevrees'},
+    {pos:14,prev:15,woc:3,a:'Bruno Mars',t:'I Just Might'},
+    {pos:15,prev:17,woc:3,a:'YOASOBI',t:'アドレナ'},
+    {pos:16,prev:12,woc:8,a:'Kaskade',t:'obvious'},
+    {pos:17,prev:null,woc:1,a:'XG',t:'HYPNOTIZE'},
+    {pos:18,prev:14,woc:7,a:'HAEVN',t:'Get Up'},
+    {pos:19,prev:null,woc:1,a:'WIES',t:'Magneten'},
+    {pos:20,prev:16,woc:12,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:21,prev:null,woc:1,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:22,prev:23,woc:3,a:'Robin Schulz',t:'Embers'},
+    {pos:23,prev:19,woc:8,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:24,prev:22,woc:14,a:'The Chainsmokers',t:'The Cure'},
+    {pos:25,prev:24,woc:14,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:26,prev:18,woc:6,a:'ARTY, ÆON:MODE & MRYN',t:'Taking Me Higher'},
+    {pos:27,prev:null,woc:1,a:'Loreen',t:'Feels Like Heaven'},
+    {pos:28,prev:20,woc:4,a:'Mike Williams, Brooks & WHAT EVA',t:'Illusion'},
+    {pos:29,prev:33,woc:3,a:'DJ Licious ft. SEM',t:'Almost Gone'},
+    {pos:30,prev:null,woc:1,a:'KA ft. S10',t:'Nachten Wakker'},
+    {pos:31,prev:21,woc:8,a:'Rijck, Cristian D & $hirak',t:'Dans Gewoon'},
+    {pos:32,prev:26,woc:13,a:'Tame Impala',t:'My Old Ways'},
+    {pos:33,prev:25,woc:7,a:'Kato ft. Jon',t:'Turn The Lights Off'},
+    {pos:34,prev:27,woc:5,a:'Dasha',t:'Here For The Party'},
+    {pos:35,prev:37,woc:2,a:'Antoon',t:'Van God Los'},
+    {pos:36,prev:29,woc:16,a:'David Guetta, Teddy Swims & Tones And I',t:'Gone Gone Gone'},
+    {pos:37,prev:28,woc:7,a:'Manse',t:'RIGHT WHERE I WANNA STAY'},
+    {pos:38,prev:32,woc:15,a:'Seven Lions ft. Lilly Ahlberg',t:'So Far Away'},
+    {pos:39,prev:34,woc:19,a:'The Chainsmokers',t:'Smooth'},
+    {pos:40,prev:31,woc:3,a:'Luke Combs',t:'Sleepless in a Hotel Room'}
+  ]},
+  '2026-02-08': {week:6,editie:427,label:'Week 6 · Editie 427',tip:'Alesso & Pendulum - FADE',entries:[
+    {pos:1,prev:2,woc:3,a:'Alice Merton',t:'Visions'},
+    {pos:2,prev:1,woc:3,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:3,prev:17,woc:2,a:'XG',t:'HYPNOTIZE'},
+    {pos:4,prev:3,woc:7,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:5,prev:4,woc:7,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:6,prev:5,woc:8,a:'Elle Coves',t:'Talk About It'},
+    {pos:7,prev:12,woc:2,a:'Harry Styles',t:'Aperture'},
+    {pos:8,prev:6,woc:6,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:9,prev:8,woc:5,a:'Tomas Grey',t:'Rumors'},
+    {pos:10,prev:7,woc:6,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:11,prev:10,woc:5,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:12,prev:9,woc:10,a:'Lola Cedès',t:'De Verte'},
+    {pos:13,prev:21,woc:2,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:14,prev:11,woc:8,a:'Seven Lions',t:'Breaking Me'},
+    {pos:15,prev:null,woc:1,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:16,prev:13,woc:11,a:'Bente',t:'Hoogtevrees'},
+    {pos:17,prev:19,woc:2,a:'WIES',t:'Magneten'},
+    {pos:18,prev:15,woc:4,a:'YOASOBI',t:'アドレナ'},
+    {pos:19,prev:14,woc:4,a:'Bruno Mars',t:'I Just Might'},
+    {pos:20,prev:null,woc:1,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:21,prev:27,woc:2,a:'Loreen',t:'Feels Like Heaven'},
+    {pos:22,prev:16,woc:9,a:'Kaskade',t:'obvious'},
+    {pos:23,prev:22,woc:4,a:'Robin Schulz',t:'Embers'},
+    {pos:24,prev:18,woc:8,a:'HAEVN',t:'Get Up'},
+    {pos:25,prev:30,woc:2,a:'KA ft. S10',t:'Nachten Wakker'},
+    {pos:26,prev:25,woc:15,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:27,prev:24,woc:15,a:'The Chainsmokers',t:'The Cure'},
+    {pos:28,prev:23,woc:9,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:29,prev:20,woc:13,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:30,prev:29,woc:4,a:'DJ Licious ft. SEM',t:'Almost Gone'},
+    {pos:31,prev:26,woc:7,a:'ARTY, ÆON:MODE & MRYN',t:'Taking Me Higher'},
+    {pos:32,prev:null,woc:1,a:'AYLIVA',t:'Renn!'},
+    {pos:33,prev:28,woc:5,a:'Mike Williams, Brooks & WHAT EVA',t:'Illusion'},
+    {pos:34,prev:35,woc:3,a:'Antoon',t:'Van God Los'},
+    {pos:35,prev:34,woc:6,a:'Dasha',t:'Here For The Party'},
+    {pos:36,prev:32,woc:14,a:'Tame Impala',t:'My Old Ways'},
+    {pos:37,prev:36,woc:17,a:'David Guetta, Teddy Swims & Tones And I',t:'Gone Gone Gone'},
+    {pos:38,prev:37,woc:8,a:'Manse',t:'RIGHT WHERE I WANNA STAY'},
+    {pos:39,prev:31,woc:9,a:'Rijck, Cristian D & $hirak',t:'Dans Gewoon'},
+    {pos:40,prev:33,woc:8,a:'Kato ft. Jon',t:'Turn The Lights Off'}
+  ]},
+  '2026-02-15': {week:7,editie:428,label:'Week 7 · Editie 428',tip:'Bebe Rexha - I Like You Better Than Me',entries:[
+    {pos:1,prev:3,woc:3,a:'XG',t:'HYPNOTIZE'},
+    {pos:2,prev:1,woc:4,a:'Alice Merton',t:'Visions'},
+    {pos:3,prev:2,woc:4,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:4,prev:null,woc:1,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:5,prev:4,woc:8,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:6,prev:5,woc:8,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:7,prev:6,woc:9,a:'Elle Coves',t:'Talk About It'},
+    {pos:8,prev:7,woc:3,a:'Harry Styles',t:'Aperture'},
+    {pos:9,prev:20,woc:2,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:10,prev:9,woc:6,a:'Tomas Grey',t:'Rumors'},
+    {pos:11,prev:13,woc:3,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:12,prev:15,woc:2,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:13,prev:8,woc:7,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:14,prev:10,woc:7,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:15,prev:11,woc:6,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:16,prev:21,woc:3,a:'Loreen',t:'Feels Like Heaven'},
+    {pos:17,prev:12,woc:11,a:'Lola Cedès',t:'De Verte'},
+    {pos:18,prev:null,woc:1,a:'sombr',t:'Homewrecker'},
+    {pos:19,prev:14,woc:9,a:'Seven Lions',t:'Breaking Me'},
+    {pos:20,prev:18,woc:5,a:'YOASOBI',t:'アドレナ'},
+    {pos:21,prev:null,woc:1,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:22,prev:null,woc:1,a:'ILLENIUM & Mako',t:'Into The Dark'},
+    {pos:23,prev:17,woc:3,a:'WIES',t:'Magneten'},
+    {pos:24,prev:19,woc:5,a:'Bruno Mars',t:'I Just Might'},
+    {pos:25,prev:16,woc:12,a:'Bente',t:'Hoogtevrees'},
+    {pos:26,prev:32,woc:2,a:'AYLIVA',t:'Renn!'},
+    {pos:27,prev:25,woc:3,a:'KA ft. S10',t:'Nachten Wakker'},
+    {pos:28,prev:null,woc:1,a:'ILLENIUM & Ellie Goulding',t:'Don\'t Want Your Love'},
+    {pos:29,prev:26,woc:16,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:30,prev:23,woc:5,a:'Robin Schulz',t:'Embers'},
+    {pos:31,prev:null,woc:1,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:32,prev:27,woc:16,a:'The Chainsmokers',t:'The Cure'},
+    {pos:33,prev:28,woc:10,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:34,prev:null,woc:1,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:35,prev:29,woc:14,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'},
+    {pos:36,prev:null,woc:1,a:'Kevin ft. Bente',t:'Vervreemd'},
+    {pos:37,prev:22,woc:10,a:'Kaskade',t:'obvious'},
+    {pos:38,prev:24,woc:9,a:'HAEVN',t:'Get Up'},
+    {pos:39,prev:30,woc:5,a:'DJ Licious ft. SEM',t:'Almost Gone'},
+    {pos:40,prev:34,woc:4,a:'Antoon',t:'Van God Los'}
+  ]},
+  '2026-02-22': {week:8,editie:429,label:'Week 8 · Editie 429',tip:'Kygo, Khalid & Gryffin - Save My Love',entries:[
+    {pos:1,prev:4,woc:2,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:2,prev:1,woc:4,a:'XG',t:'HYPNOTIZE'},
+    {pos:3,prev:9,woc:3,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:4,prev:3,woc:5,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:5,prev:2,woc:5,a:'Alice Merton',t:'Visions'},
+    {pos:6,prev:11,woc:4,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:7,prev:18,woc:2,a:'sombr',t:'Homewrecker'},
+    {pos:8,prev:5,woc:9,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:9,prev:6,woc:9,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:10,prev:12,woc:3,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:11,prev:7,woc:10,a:'Elle Coves',t:'Talk About It'},
+    {pos:12,prev:10,woc:7,a:'Tomas Grey',t:'Rumors'},
+    {pos:13,prev:8,woc:4,a:'Harry Styles',t:'Aperture'},
+    {pos:14,prev:21,woc:2,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:15,prev:26,woc:3,a:'AYLIVA',t:'Renn!'},
+    {pos:16,prev:22,woc:2,a:'ILLENIUM & Mako',t:'Into The Dark'},
+    {pos:17,prev:16,woc:4,a:'Loreen',t:'Feels Like Heaven'},
+    {pos:18,prev:13,woc:8,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:19,prev:15,woc:7,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:20,prev:31,woc:2,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:21,prev:14,woc:8,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:22,prev:17,woc:12,a:'Lola Cedès',t:'De Verte'},
+    {pos:23,prev:28,woc:2,a:'ILLENIUM & Ellie Goulding',t:'Don\'t Want Your Love'},
+    {pos:24,prev:19,woc:10,a:'Seven Lions',t:'Breaking Me'},
+    {pos:25,prev:36,woc:2,a:'Kevin ft. Bente',t:'Vervreemd'},
+    {pos:26,prev:20,woc:6,a:'YOASOBI',t:'アドレナ'},
+    {pos:27,prev:null,woc:1,a:'Bebe Rexha',t:'I Like You Better Than Me'},
+    {pos:28,prev:null,woc:1,a:'Quevedo',t:'NI BORRACHO'},
+    {pos:29,prev:23,woc:4,a:'WIES',t:'Magneten'},
+    {pos:30,prev:34,woc:2,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:31,prev:25,woc:13,a:'Bente',t:'Hoogtevrees'},
+    {pos:32,prev:24,woc:6,a:'Bruno Mars',t:'I Just Might'},
+    {pos:33,prev:29,woc:17,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:34,prev:27,woc:4,a:'KA ft. S10',t:'Nachten Wakker'},
+    {pos:35,prev:null,woc:1,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:36,prev:33,woc:11,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:37,prev:32,woc:17,a:'The Chainsmokers',t:'The Cure'},
+    {pos:38,prev:null,woc:1,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:39,prev:30,woc:6,a:'Robin Schulz',t:'Embers'},
+    {pos:40,prev:35,woc:15,a:'ILLENIUM & Ryan Tedder',t:'With Your Love'}
+  ]},
+  '2026-03-01': {week:9,editie:430,label:'Week 9 · Editie 430',tip:'Teminite & Nokae - Burn It Down',entries:[
+    {pos:1,prev:3,woc:4,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:2,prev:1,woc:3,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:3,prev:null,woc:1,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:4,prev:7,woc:3,a:'sombr',t:'Homewrecker'},
+    {pos:5,prev:2,woc:5,a:'XG',t:'HYPNOTIZE'},
+    {pos:6,prev:null,woc:1,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:7,prev:6,woc:5,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:8,prev:4,woc:6,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:9,prev:5,woc:6,a:'Alice Merton',t:'Visions'},
+    {pos:10,prev:14,woc:3,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:11,prev:10,woc:4,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:12,prev:9,woc:10,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:13,prev:15,woc:4,a:'AYLIVA',t:'Renn!'},
+    {pos:14,prev:8,woc:10,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:15,prev:16,woc:3,a:'ILLENIUM & Mako',t:'Into The Dark'},
+    {pos:16,prev:12,woc:8,a:'Tomas Grey',t:'Rumors'},
+    {pos:17,prev:20,woc:3,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:18,prev:11,woc:11,a:'Elle Coves',t:'Talk About It'},
+    {pos:19,prev:30,woc:3,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:20,prev:23,woc:3,a:'ILLENIUM & Ellie Goulding',t:'Don\'t Want Your Love'},
+    {pos:21,prev:13,woc:5,a:'Harry Styles',t:'Aperture'},
+    {pos:22,prev:27,woc:2,a:'Bebe Rexha',t:'I Like You Better Than Me'},
+    {pos:23,prev:25,woc:3,a:'Kevin ft. Bente',t:'Vervreemd'},
+    {pos:24,prev:28,woc:2,a:'Quevedo',t:'NI BORRACHO'},
+    {pos:25,prev:38,woc:2,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:26,prev:18,woc:9,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:27,prev:17,woc:5,a:'Loreen',t:'Feels Like Heaven'},
+    {pos:28,prev:19,woc:8,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:29,prev:35,woc:2,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:30,prev:22,woc:13,a:'Lola Cedès',t:'De Verte'},
+    {pos:31,prev:21,woc:9,a:'Lijpe ft. Frenna',t:'LONDON'},
+    {pos:32,prev:26,woc:7,a:'YOASOBI',t:'アドレナ'},
+    {pos:33,prev:24,woc:11,a:'Seven Lions',t:'Breaking Me'},
+    {pos:34,prev:29,woc:5,a:'WIES',t:'Magneten'},
+    {pos:35,prev:34,woc:5,a:'KA ft. S10',t:'Nachten Wakker'},
+    {pos:36,prev:33,woc:18,a:'Dave ft. Tems',t:'Raindance'},
+    {pos:37,prev:31,woc:14,a:'Bente',t:'Hoogtevrees'},
+    {pos:38,prev:36,woc:12,a:'Jason Ross, Horyzon, Camden Cox & TW3LVE',t:'Fast Forward'},
+    {pos:39,prev:null,woc:1,a:'Jessie Ware',t:'Ride'},
+    {pos:40,prev:32,woc:7,a:'Bruno Mars',t:'I Just Might'}
+  ]},
+  '2026-03-08': {week:10,editie:431,label:'Week 10 · Editie 431',tip:'PARISI & Fred again.. ft. Eyelar - This Is Real (Disappear)',entries:[
+    {pos:1,prev:3,woc:2,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:2,prev:1,woc:5,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:3,prev:2,woc:4,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:4,prev:6,woc:2,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:5,prev:4,woc:4,a:'sombr',t:'Homewrecker'},
+    {pos:6,prev:5,woc:6,a:'XG',t:'HYPNOTIZE'},
+    {pos:7,prev:null,woc:1,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:8,prev:7,woc:6,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:9,prev:8,woc:7,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:10,prev:9,woc:7,a:'Alice Merton',t:'Visions'},
+    {pos:11,prev:17,woc:4,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:12,prev:13,woc:5,a:'AYLIVA',t:'Renn!'},
+    {pos:13,prev:19,woc:4,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:14,prev:10,woc:4,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:15,prev:12,woc:11,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:16,prev:null,woc:1,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:17,prev:11,woc:5,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:18,prev:14,woc:11,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:19,prev:null,woc:1,a:'Bausa',t:'Magnetic'},
+    {pos:20,prev:15,woc:4,a:'ILLENIUM & Mako',t:'Into The Dark'},
+    {pos:21,prev:22,woc:3,a:'Bebe Rexha',t:'I Like You Better Than Me'},
+    {pos:22,prev:16,woc:9,a:'Tomas Grey',t:'Rumors'},
+    {pos:23,prev:29,woc:3,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:24,prev:25,woc:3,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:25,prev:18,woc:12,a:'Elle Coves',t:'Talk About It'},
+    {pos:26,prev:20,woc:4,a:'ILLENIUM & Ellie Goulding',t:'Don\'t Want Your Love'},
+    {pos:27,prev:21,woc:6,a:'Harry Styles',t:'Aperture'},
+    {pos:28,prev:24,woc:3,a:'Quevedo',t:'NI BORRACHO'},
+    {pos:29,prev:23,woc:4,a:'Kevin ft. Bente',t:'Vervreemd'},
+    {pos:30,prev:null,woc:1,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:31,prev:null,woc:1,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:32,prev:null,woc:1,a:'BLACKPINK',t:'GO'},
+    {pos:33,prev:28,woc:9,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:34,prev:null,woc:1,a:'Oliver Heldens',t:'Run'},
+    {pos:35,prev:39,woc:2,a:'Jessie Ware',t:'Ride'},
+    {pos:36,prev:26,woc:10,a:'Łaszewo & AVELLO',t:'headrush'},
+    {pos:37,prev:null,woc:1,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:38,prev:null,woc:1,a:'Angèle ft. Justice',t:'What You Want'},
+    {pos:39,prev:30,woc:14,a:'Lola Cedès',t:'De Verte'},
+    {pos:40,prev:null,woc:1,a:'RAYE',t:'Nightingale Lane.'}
+  ]},
+  '2026-03-15': {week:11,editie:432,label:'Week 11 · Editie 432',tip:'Martin Garrix - Catharina',entries:[
+    {pos:1,prev:7,woc:2,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:2,prev:1,woc:3,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:3,prev:4,woc:3,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:4,prev:3,woc:5,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:5,prev:2,woc:6,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:6,prev:16,woc:2,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:7,prev:5,woc:5,a:'sombr',t:'Homewrecker'},
+    {pos:8,prev:19,woc:2,a:'Bausa',t:'Magnetic'},
+    {pos:9,prev:8,woc:7,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:10,prev:11,woc:5,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:11,prev:6,woc:7,a:'XG',t:'HYPNOTIZE'},
+    {pos:12,prev:9,woc:8,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:13,prev:12,woc:6,a:'AYLIVA',t:'Renn!'},
+    {pos:14,prev:null,woc:1,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:15,prev:10,woc:8,a:'Alice Merton',t:'Visions'},
+    {pos:16,prev:13,woc:5,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:17,prev:14,woc:5,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:18,prev:15,woc:12,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:19,prev:24,woc:4,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:20,prev:34,woc:2,a:'Oliver Heldens',t:'Run'},
+    {pos:21,prev:23,woc:4,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:22,prev:21,woc:4,a:'Bebe Rexha',t:'I Like You Better Than Me'},
+    {pos:23,prev:18,woc:12,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:24,prev:37,woc:2,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:25,prev:30,woc:2,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:26,prev:17,woc:6,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:27,prev:31,woc:2,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:28,prev:20,woc:5,a:'ILLENIUM & Mako',t:'Into The Dark'},
+    {pos:29,prev:null,woc:1,a:'Harry Styles',t:'American Girls'},
+    {pos:30,prev:22,woc:10,a:'Tomas Grey',t:'Rumors'},
+    {pos:31,prev:32,woc:2,a:'BLACKPINK',t:'GO'},
+    {pos:32,prev:25,woc:13,a:'Elle Coves',t:'Talk About It'},
+    {pos:33,prev:null,woc:1,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:34,prev:27,woc:7,a:'Harry Styles',t:'Aperture'},
+    {pos:35,prev:26,woc:5,a:'ILLENIUM & Ellie Goulding',t:'Don\'t Want Your Love'},
+    {pos:36,prev:null,woc:1,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:37,prev:38,woc:2,a:'Angèle ft. Justice',t:'What You Want'},
+    {pos:38,prev:40,woc:2,a:'RAYE',t:'Nightingale Lane.'},
+    {pos:39,prev:33,woc:10,a:'Lost Frequencies, CIEL. & Radio Cargo',t:'Listen To Me'},
+    {pos:40,prev:35,woc:3,a:'Jessie Ware',t:'Ride'}
+  ]},
+  '2026-03-22': {week:12,editie:433,label:'Week 12 · Editie 433',tip:'ILLENIUM, David Guetta & Dustin Lynch - Die Living',entries:[
+    {pos:1,prev:6,woc:3,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:2,prev:1,woc:3,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:3,prev:14,woc:2,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:4,prev:2,woc:4,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:5,prev:4,woc:6,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:6,prev:3,woc:4,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:7,prev:8,woc:3,a:'Bausa',t:'Magnetic'},
+    {pos:8,prev:5,woc:7,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:9,prev:10,woc:6,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:10,prev:7,woc:6,a:'sombr',t:'Homewrecker'},
+    {pos:11,prev:9,woc:8,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:12,prev:null,woc:1,a:'Martin Garrix',t:'Catharina'},
+    {pos:13,prev:11,woc:8,a:'XG',t:'HYPNOTIZE'},
+    {pos:14,prev:13,woc:7,a:'AYLIVA',t:'Renn!'},
+    {pos:15,prev:null,woc:1,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:16,prev:12,woc:9,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:17,prev:16,woc:6,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:18,prev:15,woc:9,a:'Alice Merton',t:'Visions'},
+    {pos:19,prev:33,woc:2,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:20,prev:29,woc:2,a:'Harry Styles',t:'American Girls'},
+    {pos:21,prev:24,woc:3,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:22,prev:20,woc:3,a:'Oliver Heldens',t:'Run'},
+    {pos:23,prev:17,woc:6,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:24,prev:25,woc:3,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:25,prev:18,woc:13,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:26,prev:19,woc:5,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:27,prev:22,woc:5,a:'Bebe Rexha',t:'I Like You Better Than Me'},
+    {pos:28,prev:21,woc:5,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:29,prev:27,woc:3,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:30,prev:36,woc:2,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:31,prev:26,woc:7,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:32,prev:28,woc:6,a:'ILLENIUM & Mako',t:'Into The Dark'},
+    {pos:33,prev:23,woc:13,a:'ILLENIUM & Lø Spirit',t:'War'},
+    {pos:34,prev:30,woc:11,a:'Tomas Grey',t:'Rumors'},
+    {pos:35,prev:32,woc:14,a:'Elle Coves',t:'Talk About It'},
+    {pos:36,prev:31,woc:3,a:'BLACKPINK',t:'GO'},
+    {pos:37,prev:null,woc:1,a:'Topic, Shimza & A7S',t:'Missing You'},
+    {pos:38,prev:37,woc:3,a:'Angèle ft. Justice',t:'What You Want'},
+    {pos:39,prev:null,woc:1,a:'Charlie Puth ft. Hikaru Utada',t:'Home'},
+    {pos:40,prev:38,woc:3,a:'RAYE',t:'Nightingale Lane.'}
+  ]},
+  '2026-03-29': {week:13,editie:434,label:'Week 13 · Editie 434',tip:'MEDUZA ft. Henry Camamile - Don\'t Wanna Go Home',entries:[
+    {pos:1,prev:3,woc:3,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:2,prev:1,woc:4,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:3,prev:2,woc:4,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:4,prev:7,woc:4,a:'Bausa',t:'Magnetic'},
+    {pos:5,prev:4,woc:5,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:6,prev:5,woc:7,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:7,prev:6,woc:5,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:8,prev:12,woc:2,a:'Martin Garrix',t:'Catharina'},
+    {pos:9,prev:15,woc:2,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:10,prev:9,woc:7,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:11,prev:8,woc:8,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:12,prev:19,woc:3,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:13,prev:10,woc:7,a:'sombr',t:'Homewrecker'},
+    {pos:14,prev:20,woc:3,a:'Harry Styles',t:'American Girls'},
+    {pos:15,prev:11,woc:9,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:16,prev:13,woc:9,a:'XG',t:'HYPNOTIZE'},
+    {pos:17,prev:null,woc:1,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:18,prev:14,woc:8,a:'AYLIVA',t:'Renn!'},
+    {pos:19,prev:17,woc:7,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:20,prev:null,woc:1,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:21,prev:16,woc:10,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:22,prev:21,woc:4,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:23,prev:24,woc:4,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:24,prev:18,woc:10,a:'Alice Merton',t:'Visions'},
+    {pos:25,prev:22,woc:4,a:'Oliver Heldens',t:'Run'},
+    {pos:26,prev:null,woc:1,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:27,prev:30,woc:3,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:28,prev:23,woc:7,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:29,prev:26,woc:6,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:30,prev:29,woc:4,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:31,prev:25,woc:14,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:32,prev:39,woc:2,a:'Charlie Puth ft. Hikaru Utada',t:'Home'},
+    {pos:33,prev:28,woc:6,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:34,prev:27,woc:6,a:'Bebe Rexha',t:'I Like You Better Than Me'},
+    {pos:35,prev:37,woc:2,a:'Topic, Shimza & A7S',t:'Missing You'},
+    {pos:36,prev:35,woc:15,a:'Elle Coves',t:'Talk About It'},
+    {pos:37,prev:34,woc:12,a:'Tomas Grey',t:'Rumors'},
+    {pos:38,prev:33,woc:14,a:'LLENIUM & Lø Spirit',t:'War'},
+    {pos:39,prev:31,woc:8,a:'FLEMMING & Hardwell',t:'Zonder Jou'},
+    {pos:40,prev:36,woc:4,a:'BLACKPINK',t:'GO'}
+  ]},
+  '2026-04-05': {week:14,editie:435,label:'Week 14 · Editie 435',tip:'venbee - not my day',entries:[
+    {pos:1,prev:4,woc:5,a:'The Bausa',t:'Magnetic'},
+    {pos:2,prev:17,woc:2,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:3,prev:1,woc:4,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:4,prev:null,woc:1,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:5,prev:3,woc:5,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:6,prev:2,woc:5,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:7,prev:5,woc:6,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:8,prev:6,woc:8,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:9,prev:20,woc:2,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:10,prev:7,woc:6,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:11,prev:9,woc:3,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:12,prev:8,woc:3,a:'Martin Garrix',t:'Catharina'},
+    {pos:13,prev:10,woc:8,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:14,prev:12,woc:4,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:15,prev:11,woc:9,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:16,prev:14,woc:4,a:'Harry Styles',t:'American Girls'},
+    {pos:17,prev:null,woc:1,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:18,prev:null,woc:1,a:'RAYE',t:'I Know You\'re Hurting.'},
+    {pos:19,prev:13,woc:8,a:'sombr',t:'Homewrecker'},
+    {pos:20,prev:null,woc:1,a:'Blanks',t:'Light It Up'},
+    {pos:21,prev:15,woc:10,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:22,prev:26,woc:2,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:23,prev:16,woc:10,a:'XG',t:'HYPNOTIZE'},
+    {pos:24,prev:23,woc:5,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:25,prev:18,woc:9,a:'AYLIVA',t:'Renn!'},
+    {pos:26,prev:22,woc:5,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:27,prev:19,woc:8,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:28,prev:27,woc:4,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:29,prev:21,woc:11,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:30,prev:24,woc:11,a:'Alice Merton',t:'Visions'},
+    {pos:31,prev:30,woc:5,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:32,prev:25,woc:5,a:'Oliver Heldens',t:'Run'},
+    {pos:33,prev:28,woc:8,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:34,prev:32,woc:3,a:'Charlie Puth ft. Hikaru Utada',t:'Home'},
+    {pos:35,prev:29,woc:7,a:'Danny L Harle ft. Dua Lipa',t:'Two Hearts'},
+    {pos:36,prev:31,woc:15,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:37,prev:33,woc:7,a:'John Summit ft. LAVINIA',t:'SHADOWS'},
+    {pos:38,prev:36,woc:16,a:'Elle Coves',t:'Talk About It'},
+    {pos:39,prev:35,woc:3,a:'Topic, Shimza & A7S',t:'Missing You'},
+    {pos:40,prev:37,woc:13,a:'Tomas Grey',t:'Rumors'}
+  ]},
+  '2026-04-12': {week:15,editie:436,label:'Week 15 · Editie 436',tip:'The Chainsmokers ft. Oaks - Echo',entries:[
+    {pos:1,prev:2,woc:3,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:2,prev:4,woc:2,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:3,prev:1,woc:6,a:'The Bausa',t:'Magnetic'},
+    {pos:4,prev:9,woc:3,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:5,prev:20,woc:2,a:'Blanks',t:'Light It Up'},
+    {pos:6,prev:3,woc:5,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:7,prev:18,woc:2,a:'RAYE',t:'I Know You\'re Hurting.'},
+    {pos:8,prev:7,woc:7,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:9,prev:5,woc:6,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:10,prev:8,woc:9,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:11,prev:6,woc:6,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:12,prev:17,woc:2,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:13,prev:11,woc:4,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:14,prev:10,woc:7,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:15,prev:14,woc:5,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:16,prev:15,woc:10,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:17,prev:22,woc:3,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:18,prev:13,woc:9,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:19,prev:12,woc:4,a:'Martin Garrix',t:'Catharina'},
+    {pos:20,prev:16,woc:5,a:'Harry Styles',t:'American Girls'},
+    {pos:21,prev:null,woc:1,a:'venbee',t:'not my day'},
+    {pos:22,prev:19,woc:9,a:'sombr',t:'Homewrecker'},
+    {pos:23,prev:21,woc:11,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:24,prev:23,woc:11,a:'XG',t:'HYPNOTIZE'},
+    {pos:25,prev:24,woc:6,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:26,prev:25,woc:10,a:'AYLIVA',t:'Renn!'},
+    {pos:27,prev:26,woc:6,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:28,prev:27,woc:9,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:29,prev:28,woc:5,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:30,prev:29,woc:12,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:31,prev:30,woc:12,a:'Alice Merton',t:'Visions'},
+    {pos:32,prev:31,woc:6,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:33,prev:32,woc:6,a:'Oliver Heldens',t:'Run'},
+    {pos:34,prev:null,woc:1,a:'Jason Ross & TW3LVE',t:'Let Go'},
+    {pos:35,prev:34,woc:4,a:'Charlie Puth ft. Hikaru Utada',t:'Home'},
+    {pos:36,prev:33,woc:9,a:'ILLENIUM & Elley Duhé',t:'Feels Like You'},
+    {pos:37,prev:36,woc:16,a:'AFROJACK & Amél',t:'Rivers'},
+    {pos:38,prev:null,woc:1,a:'Russo & Emma Heesters',t:'Liefdesverdriet'},
+    {pos:39,prev:38,woc:17,a:'Elle Coves',t:'Talk About It'},
+    {pos:40,prev:null,woc:1,a:'Trobi, LUNA & Bilal Wahib',t:'In Je Bed'}
+  ]},
+  '2026-04-19': {week:16,editie:437,label:'Week 16 · Editie 437',tip:'Olivia Rodrigo - drop dead',entries:[
+    {pos:1,prev:2,woc:3,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:2,prev:5,woc:3,a:'Blanks',t:'Light It Up'},
+    {pos:3,prev:1,woc:4,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:4,prev:3,woc:7,a:'The Bausa',t:'Magnetic'},
+    {pos:5,prev:4,woc:4,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:6,prev:21,woc:2,a:'venbee',t:'not my day'},
+    {pos:7,prev:null,woc:1,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:8,prev:7,woc:3,a:'RAYE',t:'I Know You\'re Hurting.'},
+    {pos:9,prev:6,woc:6,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:10,prev:12,woc:3,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:11,prev:8,woc:8,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:12,prev:10,woc:10,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:13,prev:9,woc:7,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:14,prev:13,woc:5,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:15,prev:17,woc:4,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:16,prev:15,woc:6,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:17,prev:14,woc:8,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:18,prev:16,woc:11,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:19,prev:11,woc:7,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:20,prev:18,woc:10,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:21,prev:20,woc:6,a:'Harry Styles',t:'American Girls'},
+    {pos:22,prev:19,woc:5,a:'Martin Garrix',t:'Catharina'},
+    {pos:23,prev:22,woc:10,a:'sombr',t:'Homewrecker'},
+    {pos:24,prev:null,woc:1,a:'Lady Gaga & Doechii',t:'RUNWAY'},
+    {pos:25,prev:null,woc:1,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:26,prev:25,woc:7,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:27,prev:23,woc:12,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:28,prev:27,woc:7,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:29,prev:34,woc:2,a:'Jason Ross & TW3LVE',t:'Let Go'},
+    {pos:30,prev:29,woc:6,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:31,prev:28,woc:10,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:32,prev:24,woc:12,a:'XG',t:'HYPNOTIZE'},
+    {pos:33,prev:26,woc:11,a:'AYLIVA',t:'Renn!'},
+    {pos:34,prev:31,woc:13,a:'Alice Merton',t:'Visions'},
+    {pos:35,prev:30,woc:13,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:36,prev:38,woc:2,a:'Russo & Emma Heesters',t:'Liefdesverdriet'},
+    {pos:37,prev:32,woc:7,a:'MitiS ft. KC',t:'Wilderness'},
+    {pos:38,prev:40,woc:2,a:'Trobi, LUNA & Bilal Wahib',t:'In Je Bed'},
+    {pos:39,prev:33,woc:7,a:'Oliver Heldens',t:'Run'},
+    {pos:40,prev:35,woc:5,a:'Charlie Puth ft. Hikaru Utada',t:'Home'}
+  ]},
+  '2026-04-26': {week:17,editie:438,label:'Week 17 · Editie 438',tip:'Baauer - Better',entries:[
+    {pos:1,prev:2,woc:4,a:'Blanks',t:'Light It Up'},
+    {pos:2,prev:7,woc:2,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:3,prev:1,woc:4,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:4,prev:3,woc:5,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:5,prev:6,woc:3,a:'venbee',t:'not my day'},
+    {pos:6,prev:4,woc:8,a:'The Bausa',t:'Magnetic'},
+    {pos:7,prev:5,woc:5,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:8,prev:null,woc:1,a:'Olivia Rodrigo',t:'drop dead'},
+    {pos:9,prev:10,woc:4,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:10,prev:9,woc:7,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:11,prev:8,woc:4,a:'RAYE',t:'I Know You\'re Hurting.'},
+    {pos:12,prev:15,woc:5,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:13,prev:12,woc:11,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:14,prev:11,woc:9,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:15,prev:14,woc:6,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:16,prev:13,woc:8,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:17,prev:16,woc:7,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:18,prev:24,woc:2,a:'Lady Gaga & Doechii',t:'RUNWAY'},
+    {pos:19,prev:18,woc:12,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:20,prev:25,woc:2,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:21,prev:17,woc:9,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:22,prev:21,woc:7,a:'Harry Styles',t:'American Girls'},
+    {pos:23,prev:29,woc:3,a:'Jason Ross & TW3LVE',t:'Let Go'},
+    {pos:24,prev:23,woc:11,a:'sombr',t:'Homewrecker'},
+    {pos:25,prev:20,woc:11,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:26,prev:19,woc:8,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:27,prev:26,woc:8,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:28,prev:22,woc:6,a:'Martin Garrix',t:'Catharina'},
+    {pos:29,prev:28,woc:8,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:30,prev:null,woc:1,a:'John Summit, Devault & Julia Church',t:'SHADES OF BLUE'},
+    {pos:31,prev:30,woc:7,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:32,prev:27,woc:13,a:'Son Mieux',t:'Dark Before The Dawn'},
+    {pos:33,prev:null,woc:1,a:'Madonna',t:'I Feel So Free'},
+    {pos:34,prev:31,woc:11,a:'Jason Ross & Lin was here',t:'Crash'},
+    {pos:35,prev:34,woc:14,a:'Alice Merton',t:'Visions'},
+    {pos:36,prev:35,woc:14,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:37,prev:36,woc:3,a:'Russo & Emma Heesters',t:'Liefdesverdriet'},
+    {pos:38,prev:32,woc:13,a:'XG',t:'HYPNOTIZE'},
+    {pos:39,prev:38,woc:3,a:'Trobi, LUNA & Bilal Wahib',t:'In Je Bed'},
+    {pos:40,prev:33,woc:12,a:'AYLIVA',t:'Renn!'}
+  ]},
+  '2026-05-03': {week:18,editie:439,label:'Week 18 · Editie 439',tip:'Trobi, Mula B & WINSON - Snuifbezorgd',entries:[
+    {pos:1,prev:2,woc:3,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:2,prev:1,woc:5,a:'Blanks',t:'Light It Up'},
+    {pos:3,prev:8,woc:2,a:'Olivia Rodrigo',t:'drop dead'},
+    {pos:4,prev:3,woc:5,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:5,prev:4,woc:6,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:6,prev:5,woc:4,a:'venbee',t:'not my day'},
+    {pos:7,prev:6,woc:9,a:'The Bausa',t:'Magnetic'},
+    {pos:8,prev:9,woc:5,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:9,prev:null,woc:1,a:'Baauer',t:'Better'},
+    {pos:10,prev:7,woc:6,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:11,prev:10,woc:8,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:12,prev:18,woc:3,a:'Lady Gaga & Doechii',t:'RUNWAY'},
+    {pos:13,prev:12,woc:6,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:14,prev:13,woc:12,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:15,prev:14,woc:10,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:16,prev:15,woc:7,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:17,prev:20,woc:3,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:18,prev:17,woc:8,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:19,prev:11,woc:5,a:'RAYE',t:'I Know You\'re Hurting.'},
+    {pos:20,prev:19,woc:13,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:21,prev:16,woc:9,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:22,prev:null,woc:1,a:'Shaboozey',t:'Born To Die'},
+    {pos:23,prev:null,woc:1,a:'The Chainsmokers ft. Oaks',t:'Already Know'},
+    {pos:24,prev:21,woc:10,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:25,prev:33,woc:2,a:'Madonna',t:'I Feel So Free'},
+    {pos:26,prev:22,woc:8,a:'Harry Styles',t:'American Girls'},
+    {pos:27,prev:30,woc:2,a:'John Summit, Devault & Julia Church',t:'SHADES OF BLUE'},
+    {pos:28,prev:23,woc:4,a:'Jason Ross & TW3LVE',t:'Let Go'},
+    {pos:29,prev:26,woc:9,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:30,prev:24,woc:12,a:'sombr',t:'Homewrecker'},
+    {pos:31,prev:27,woc:9,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:32,prev:31,woc:8,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:33,prev:25,woc:12,a:'Don Toliver ft. Rema',t:'Secondhand'},
+    {pos:34,prev:29,woc:9,a:'Megan Moroney',t:'Sorry... I Meant Tonight'},
+    {pos:35,prev:null,woc:1,a:'Lil Kleine & Samuel Welten',t:'Maak Me Nou Niet Gek'},
+    {pos:36,prev:28,woc:7,a:'Martin Garrix',t:'Catharina'},
+    {pos:37,prev:null,woc:1,a:'Ella Langley & Morgan Wallen',t:'I Can\'t Love You Anymore'},
+    {pos:38,prev:35,woc:15,a:'Alice Merton',t:'Visions'},
+    {pos:39,prev:36,woc:15,a:'ILLENIUM, Bastille & Dabin',t:'Feel Alive'},
+    {pos:40,prev:null,woc:1,a:'Ronnie Flex & DJ DYLVN ft. ADF Antje, Trapmoneybiggie & Carel',t:'Punta cana'}
+  ]},
+  '2026-05-10': {week:19,editie:440,label:'Week 19 · Editie 440',tip:'Froukje - Jaar Na Jaar',entries:[
+    {pos:1,prev:3,woc:3,a:'Olivia Rodrigo',t:'drop dead'},
+    {pos:2,prev:1,woc:4,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:3,prev:2,woc:6,a:'Blanks',t:'Light It Up'},
+    {pos:4,prev:9,woc:2,a:'Baauer',t:'Better'},
+    {pos:5,prev:4,woc:6,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:6,prev:5,woc:7,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:7,prev:6,woc:5,a:'venbee',t:'not my day'},
+    {pos:8,prev:7,woc:10,a:'The Bausa',t:'Magnetic'},
+    {pos:9,prev:8,woc:6,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:10,prev:null,woc:1,a:'Trobi, Mula B & WINSON',t:'Snuifbezorgd'},
+    {pos:11,prev:22,woc:2,a:'Shaboozey',t:'Born To Die'},
+    {pos:12,prev:11,woc:9,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:13,prev:12,woc:4,a:'Lady Gaga & Doechii',t:'RUNWAY'},
+    {pos:14,prev:17,woc:4,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:15,prev:23,woc:2,a:'The Chainsmokers ft. Oaks',t:'Already Know'},
+    {pos:16,prev:null,woc:1,a:'Zara Larsson, JT & Margo XS',t:'Pretty Ugly'},
+    {pos:17,prev:14,woc:13,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:18,prev:13,woc:7,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:19,prev:10,woc:7,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:20,prev:16,woc:8,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:21,prev:18,woc:9,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:22,prev:15,woc:11,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:23,prev:35,woc:2,a:'Lil Kleine & Samuel Welten',t:'Maak Me Nou Niet Gek'},
+    {pos:24,prev:20,woc:14,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:25,prev:null,woc:1,a:'Halsey',t:'Carry The Weight'},
+    {pos:26,prev:37,woc:2,a:'Ella Langley & Morgan Wallen',t:'I Can\'t Love You Anymore'},
+    {pos:27,prev:24,woc:11,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:28,prev:21,woc:10,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:29,prev:25,woc:3,a:'Madonna',t:'I Feel So Free'},
+    {pos:30,prev:19,woc:6,a:'RAYE',t:'I Know You\'re Hurting.'},
+    {pos:31,prev:26,woc:9,a:'Harry Styles',t:'American Girls'},
+    {pos:32,prev:null,woc:1,a:'Madonna & Sabrina Carpenter',t:'Bring Your Love'},
+    {pos:33,prev:29,woc:10,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:34,prev:28,woc:5,a:'Jason Ross & TW3LVE',t:'Let Go'},
+    {pos:35,prev:32,woc:9,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:36,prev:40,woc:2,a:'Ronnie Flex & DJ DYLVN ft. ADF Antje, Trapmoneybiggie & Carel',t:'Punta cana'},
+    {pos:37,prev:27,woc:3,a:'John Summit, Devault & Julia Church',t:'SHADES OF BLUE'},
+    {pos:38,prev:31,woc:10,a:'Alex Warren',t:'FEVER DREAM'},
+    {pos:39,prev:null,woc:1,a:'Kevin ft. Roxy Dekker',t:'Jij Hebt Mij'},
+    {pos:40,prev:30,woc:13,a:'sombr',t:'Homewrecker'}
+  ]},
+  '2026-05-17': {week:20,editie:441,label:'Week 20 · Editie 441',tip:'Martin Garrix & Ed Sheeran - Repeat It',entries:[
+    {pos:1,prev:10,woc:2,a:'Trobi, Mula B & WINSON',t:'Snuifbezorgd'},
+    {pos:2,prev:4,woc:3,a:'Baauer',t:'Better'},
+    {pos:3,prev:1,woc:4,a:'Olivia Rodrigo',t:'drop dead'},
+    {pos:4,prev:16,woc:2,a:'Zara Larsson, JT & Margo XS',t:'Pretty Ugly'},
+    {pos:5,prev:2,woc:5,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:6,prev:11,woc:3,a:'Shaboozey',t:'Born To Die'},
+    {pos:7,prev:3,woc:7,a:'Blanks',t:'Light It Up'},
+    {pos:8,prev:5,woc:7,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:9,prev:8,woc:11,a:'The Bausa',t:'Magnetic'},
+    {pos:10,prev:6,woc:8,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:11,prev:7,woc:6,a:'venbee',t:'not my day'},
+    {pos:12,prev:15,woc:3,a:'The Chainsmokers ft. Oaks',t:'Already Know'},
+    {pos:13,prev:null,woc:1,a:'Froukje',t:'Jaar Na Jaar'},
+    {pos:14,prev:9,woc:7,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:15,prev:23,woc:3,a:'Lil Kleine & Samuel Welten',t:'Maak Me Nou Niet Gek'},
+    {pos:16,prev:14,woc:5,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:17,prev:12,woc:10,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:18,prev:26,woc:3,a:'Ella Langley & Morgan Wallen',t:'I Can\'t Love You Anymore'},
+    {pos:19,prev:13,woc:5,a:'Lady Gaga & Doechii',t:'RUNWAY'},
+    {pos:20,prev:17,woc:14,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:21,prev:25,woc:2,a:'Halsey',t:'Carry The Weight'},
+    {pos:22,prev:21,woc:10,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:23,prev:20,woc:9,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:24,prev:null,woc:1,a:'Trobi, KA & Yade Lauren',t:'Hoog'},
+    {pos:25,prev:24,woc:15,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:26,prev:18,woc:8,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:27,prev:36,woc:3,a:'Ronnie Flex & DJ DYLVN ft. ADF Antje, Trapmoneybiggie & Carel',t:'Punta cana'},
+    {pos:28,prev:22,woc:12,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:29,prev:39,woc:2,a:'Kevin ft. Roxy Dekker',t:'Jij Hebt Mij'},
+    {pos:30,prev:32,woc:2,a:'Madonna & Sabrina Carpenter',t:'Bring Your Love'},
+    {pos:31,prev:null,woc:1,a:'Calvin Harris & Jazzy',t:'Satisfy'},
+    {pos:32,prev:31,woc:10,a:'Harry Styles',t:'American Girls'},
+    {pos:33,prev:19,woc:8,a:'Robin Jaspers',t:'Burn So Good'},
+    {pos:34,prev:33,woc:11,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:35,prev:27,woc:12,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:36,prev:null,woc:1,a:'Bob Moses',t:'Leave Like This'},
+    {pos:37,prev:35,woc:10,a:'Jennifer Lopez & David Guetta',t:'Save Me Tonight'},
+    {pos:38,prev:28,woc:11,a:'Teminite & Nokae',t:'Burn It Down'},
+    {pos:39,prev:34,woc:6,a:'Jason Ross & TW3LVE',t:'Let Go'},
+    {pos:40,prev:29,woc:4,a:'Madonna',t:'I Feel So Free'}
+  ]},
+  '2026-05-24': {week:21,editie:442,label:'Week 21 · Editie 442',tip:'Nothing But Thieves - Evolution',entries:[
+    {pos:1,prev:null,woc:1,a:'Martin Garrix & Ed Sheeran',t:'Repeat It'},
+    {pos:2,prev:1,woc:3,a:'Trobi, Mula B & WINSON',t:'Snuifbezorgd'},
+    {pos:3,prev:4,woc:3,a:'Zara Larsson, JT & Margo XS',t:'Pretty Ugly'},
+    {pos:4,prev:2,woc:4,a:'Baauer',t:'Better'},
+    {pos:5,prev:3,woc:5,a:'Olivia Rodrigo',t:'drop dead'},
+    {pos:6,prev:13,woc:2,a:'Froukje',t:'Jaar Na Jaar'},
+    {pos:7,prev:6,woc:4,a:'Shaboozey',t:'Born To Die'},
+    {pos:8,prev:5,woc:6,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:9,prev:24,woc:2,a:'Trobi, KA & Yade Lauren',t:'Hoog'},
+    {pos:10,prev:8,woc:8,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:11,prev:12,woc:4,a:'The Chainsmokers ft. Oaks',t:'Already Know'},
+    {pos:12,prev:7,woc:8,a:'Blanks',t:'Light It Up'},
+    {pos:13,prev:9,woc:12,a:'The Bausa',t:'Magnetic'},
+    {pos:14,prev:15,woc:4,a:'Lil Kleine & Samuel Welten',t:'Maak Me Nou Niet Gek'},
+    {pos:15,prev:10,woc:9,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:16,prev:18,woc:4,a:'Ella Langley & Morgan Wallen',t:'I Can\'t Love You Anymore'},
+    {pos:17,prev:14,woc:8,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:18,prev:11,woc:7,a:'venbee',t:'not my day'},
+    {pos:19,prev:21,woc:3,a:'Halsey',t:'Carry The Weight'},
+    {pos:20,prev:16,woc:6,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:21,prev:29,woc:3,a:'Kevin ft. Roxy Dekker',t:'Jij Hebt Mij'},
+    {pos:22,prev:20,woc:15,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:23,prev:22,woc:11,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:24,prev:17,woc:11,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:25,prev:23,woc:10,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:26,prev:27,woc:4,a:'Ronnie Flex & DJ DYLVN ft. ADF Antje, Trapmoneybiggie & Carel',t:'Punta cana'},
+    {pos:27,prev:36,woc:2,a:'Bob Moses',t:'Leave Like This'},
+    {pos:28,prev:19,woc:6,a:'Lady Gaga & Doechii',t:'RUNWAY'},
+    {pos:29,prev:25,woc:16,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:30,prev:31,woc:2,a:'Calvin Harris & Jazzy',t:'Satisfy'},
+    {pos:31,prev:26,woc:9,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:32,prev:30,woc:3,a:'Madonna & Sabrina Carpenter',t:'Bring Your Love'},
+    {pos:33,prev:28,woc:13,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:34,prev:32,woc:11,a:'Harry Styles',t:'American Girls'},
+    {pos:35,prev:null,woc:1,a:'Elley Duhé',t:'This Side of Heaven'},
+    {pos:36,prev:null,woc:1,a:'Jorja Smith',t:'What\'s Done Is Done'},
+    {pos:37,prev:35,woc:13,a:'Froukje',t:'Iedereen Gaat Vreemd'},
+    {pos:38,prev:34,woc:12,a:'FLEMMING & Radical Redemption',t:'Spiegel Aan De Wand'},
+    {pos:39,prev:null,woc:1,a:'Łaszewo',t:'GIMME LOVE'},
+    {pos:40,prev:38,woc:12,a:'Teminite & Nokae',t:'Burn It Down'}
+  ]},
+  '2026-05-31': {week:22,editie:443,label:'Week 22 · Editie 443',tip:'Becky Hill - More! More! More!',entries:[
+    {pos:1,prev:1,woc:2,a:'Martin Garrix & Ed Sheeran',t:'Repeat It'},
+    {pos:2,prev:3,woc:4,a:'Zara Larsson, JT & Margo XS',t:'Pretty Ugly'},
+    {pos:3,prev:2,woc:4,a:'Trobi, Mula B & WINSON',t:'Snuifbezorgd'},
+    {pos:4,prev:9,woc:3,a:'Trobi, KA & Yade Lauren',t:'Hoog'},
+    {pos:5,prev:6,woc:3,a:'Froukje',t:'Jaar Na Jaar'},
+    {pos:6,prev:5,woc:6,a:'Olivia Rodrigo',t:'drop dead'},
+    {pos:7,prev:4,woc:5,a:'Baauer',t:'Better'},
+    {pos:8,prev:7,woc:5,a:'Shaboozey',t:'Born To Die'},
+    {pos:9,prev:8,woc:7,a:'The Chainsmokers ft. Oaks',t:'Echo'},
+    {pos:10,prev:11,woc:5,a:'The Chainsmokers ft. Oaks',t:'Already Know'},
+    {pos:11,prev:10,woc:9,a:'MEDUZA ft. Henry Camamile',t:'Don\'t Wanna Go Home'},
+    {pos:12,prev:null,woc:1,a:'Nothing But Thieves',t:'Evolution'},
+    {pos:13,prev:14,woc:5,a:'Lil Kleine & Samuel Welten',t:'Maak Me Nou Niet Gek'},
+    {pos:14,prev:12,woc:9,a:'Blanks',t:'Light It Up'},
+    {pos:15,prev:16,woc:5,a:'Ella Langley & Morgan Wallen',t:'I Can\'t Love You Anymore'},
+    {pos:16,prev:21,woc:4,a:'Kevin ft. Roxy Dekker',t:'Jij Hebt Mij'},
+    {pos:17,prev:13,woc:13,a:'The Bausa',t:'Magnetic'},
+    {pos:18,prev:19,woc:4,a:'Halsey',t:'Carry The Weight'},
+    {pos:19,prev:null,woc:1,a:'Olivia Rodrigo',t:'the cure'},
+    {pos:20,prev:27,woc:3,a:'Bob Moses',t:'Leave Like This'},
+    {pos:21,prev:15,woc:10,a:'ILLENIUM, David Guetta & Dustin Lynch',t:'Die Living'},
+    {pos:22,prev:17,woc:9,a:'Tritonal & HARLEE',t:'Walk Away'},
+    {pos:23,prev:20,woc:7,a:'AFROJACK, Sia & David Guetta',t:'Awake Tonight'},
+    {pos:24,prev:23,woc:12,a:'Bebe Rexha & Faithless',t:'New Religion'},
+    {pos:25,prev:22,woc:16,a:'Alesso & Pendulum',t:'FADE'},
+    {pos:26,prev:25,woc:11,a:'Seven Lions, Andrew Bayer & Oaks',t:'Hurricane'},
+    {pos:27,prev:26,woc:5,a:'Ronnie Flex & DJ DYLVN ft. ADF Antje, Trapmoneybiggie & Carel',t:'Punta cana'},
+    {pos:28,prev:36,woc:2,a:'Jorja Smith',t:'What\'s Done Is Done'},
+    {pos:29,prev:35,woc:2,a:'Elley Duhé',t:'This Side of Heaven'},
+    {pos:30,prev:18,woc:8,a:'venbee',t:'not my day'},
+    {pos:31,prev:29,woc:17,a:'Noah Kahan',t:'The Great Divide'},
+    {pos:32,prev:31,woc:10,a:'Adventure Club & Trivecta ft. Nevve',t:'Let It Go'},
+    {pos:33,prev:null,woc:1,a:'Olivia Dean',t:'Baby Steps'},
+    {pos:34,prev:30,woc:3,a:'Calvin Harris & Jazzy',t:'Satisfy'},
+    {pos:35,prev:39,woc:2,a:'Łaszewo',t:'GIMME LOVE'},
+    {pos:36,prev:24,woc:12,a:'PARISI & Fred again.. ft. Eyelar',t:'This Is Real'},
+    {pos:37,prev:34,woc:12,a:'Harry Styles',t:'American Girls'},
+    {pos:38,prev:null,woc:1,a:'Agoria & Blasé',t:'You\'re Not Alone'},
+    {pos:39,prev:33,woc:14,a:'Kygo, Khalid & Gryffin',t:'Save My Love'},
+    {pos:40,prev:32,woc:4,a:'Madonna & Sabrina Carpenter',t:'Bring Your Love'}
+  ]}
+};
+
+// ---- IMAGE CACHE (iTunes API) ----
+const imgCache = {};
+const IMG_PLACEHOLDER = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="46" height="46"><rect width="46" height="46" rx="8" fill="%23ede9fe"/><text x="50%" y="55%" font-size="20" text-anchor="middle" dominant-baseline="middle">🎵</text></svg>';
+
+async function getImg(artist, title) {
+  const key = artist + '||' + title;
+  if (imgCache[key]) return imgCache[key];
+  imgCache[key] = IMG_PLACEHOLDER; // prevent duplicate fetches
+  try {
+    const q = encodeURIComponent(artist + ' ' + title);
+    const r = await fetch(`https://itunes.apple.com/search?term=${q}&media=music&limit=1&entity=song`);
+    const d = await r.json();
+    if (d.results && d.results.length > 0) {
+      const url = d.results[0].artworkUrl100.replace('100x100', '300x300');
+      imgCache[key] = url;
+    }
+  } catch(e) {}
+  return imgCache[key];
+}
+
+// ---- CORE ----
+const sortedSlugs = Object.keys(WEEKS).sort();
+const today = new Date();
+
+function getSlugFromURL() {
+  const hash = window.location.hash.replace('#','');
+  if (hash && WEEKS[hash]) return hash;
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  const last = parts[parts.length-1];
+  if (last && WEEKS[last]) return last;
+  return sortedSlugs[sortedSlugs.length-1];
+}
+
+function slugToDate(slug) {
+  const [y,m,d] = slug.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function fmtSlug(slug) {
+  return slugToDate(slug).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});
+}
+
+function navigateTo(slug) {
+  window.location.hash = slug;
+  renderChart(slug);
+  renderCalendar(slug);
+}
+
+window.addEventListener('hashchange', () => {
+  const s = getSlugFromURL();
+  renderChart(s);
+  renderCalendar(s);
+});
+
+function songId(e) { return e.a+'||'+e.t; }
+
+function posMap(list) {
+  const m={};
+  list.forEach((e,i) => m[songId(e)] = i+1);
+  return m;
+}
+
+function movStr(prevMap, key, cur) {
+  if (!prevMap) return 'NEW';
+  const x = prevMap[key];
+  if (!x) return 'NEW';
+  const d = x - cur;
+  if (d===0) return '—';
+  return d>0 ? '↑ '+d : '↓ '+Math.abs(d);
+}
+
+function wocAndPeak(key, slugIdx) {
+  let woc=0, peak=Infinity;
+  for (let w=0; w<=slugIdx; w++) {
+    const pm = posMap(WEEKS[sortedSlugs[w]].entries);
+    if (pm[key]!==undefined) { woc++; if(pm[key]<peak) peak=pm[key]; }
+  }
+  return {woc, peak};
+}
+
+function renderChart(slug) {
+  const slugIdx = sortedSlugs.indexOf(slug);
+  const week = WEEKS[slug];
+  document.getElementById('prevBtn').disabled = slugIdx <= 0;
+  document.getElementById('nextBtn').disabled = slugIdx >= sortedSlugs.length-1;
+  document.getElementById('dateLabel').textContent = week.label;
+
+  const tipBar = document.getElementById('tipBar');
+  if (week.tip) {
+    tipBar.style.display = '';
+    tipBar.innerHTML = '🎵 <b>LotTip:</b> <span>' + week.tip + '</span>';
+  } else {
+    tipBar.style.display = 'none';
+  }
+
+  const prevSlug = slugIdx > 0 ? sortedSlugs[slugIdx-1] : null;
+  const pm = prevSlug ? posMap(WEEKS[prevSlug].entries) : null;
+
+  const el = document.getElementById('chart');
+  el.innerHTML = '';
+
+  week.entries.forEach((e, n) => {
+    const key = songId(e);
+    const cur = n+1;
+    let m = movStr(pm, key, cur);
+    let mvCls = 'movement';
+    if (m.startsWith('↑')) mvCls+=' up';
+    else if (m.startsWith('↓')) mvCls+=' down';
+    else if (m==='NEW') mvCls+=' new';
+    else mvCls+=' same';
+    const {woc, peak} = wocAndPeak(key, slugIdx);
+    const topCls = cur===1?' top1':cur===2?' top2':cur===3?' top3':'';
+    const row = document.createElement('div');
+    row.className = 'row'+topCls;
+
+    const rankCell=document.createElement('div');rankCell.className='rank-cell';
+    const rankEl=document.createElement('div');rankEl.className='rank';rankEl.textContent=cur;
+    const movEl=document.createElement('div');movEl.className=mvCls;movEl.textContent=m;
+    rankCell.appendChild(rankEl);rankCell.appendChild(movEl);
+
+    const img=document.createElement('img');img.className='cover';img.src=IMG_PLACEHOLDER;img.alt='';
+    img.dataset.artist=e.a;img.dataset.title=e.t;
+
+    const songDiv=document.createElement('div');songDiv.className='song';
+    const titleEl=document.createElement('div');titleEl.className='title';titleEl.textContent=e.t;
+    const artistEl=document.createElement('div');artistEl.className='artist';artistEl.textContent=e.a;
+    songDiv.appendChild(titleEl);songDiv.appendChild(artistEl);
+
+    const wocEl=document.createElement('div');wocEl.className='woc';wocEl.textContent=woc;
+    const peakEl=document.createElement('div');peakEl.className='peak';peakEl.textContent=peak;
+
+    row.appendChild(rankCell);row.appendChild(img);row.appendChild(songDiv);
+    row.appendChild(wocEl);row.appendChild(peakEl);
+    el.appendChild(row);
+  });
+
+  // Lazy-load images via iTunes after render
+  loadImages();
+}
+
+async function loadImages() {
+  const imgs = document.querySelectorAll('img.cover[data-artist]');
+  // batch in groups of 5 to avoid hammering the API
+  for (let i=0; i<imgs.length; i+=5) {
+    const batch = Array.from(imgs).slice(i, i+5);
+    await Promise.all(batch.map(async img => {
+      const url = await getImg(img.dataset.artist, img.dataset.title);
+      img.src = url;
+    }));
+  }
+}
+
+function navWeek(dir) {
+  const cur = getSlugFromURL();
+  const idx = sortedSlugs.indexOf(cur);
+  const next = sortedSlugs[idx+dir];
+  if (next) navigateTo(next);
+}
+
+// ---- CALENDAR ----
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let calYear, calMonth;
+
+function initCal(slug) {
+  const d = slugToDate(slug);
+  calYear = d.getFullYear();
+  calMonth = d.getMonth();
+}
+
+function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(getSlugFromURL()); }
+function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(getSlugFromURL()); }
+
+function renderCalendar(activeSlug) {
+  document.getElementById('calMonthLabel').textContent = MONTHS[calMonth]+' '+calYear;
+  const chartDates = new Set(sortedSlugs);
+  const firstDay = new Date(calYear, calMonth, 1);
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  let startOffset = firstDay.getDay()-1;
+  if(startOffset<0) startOffset=6;
+  const cells = document.getElementById('calCells');
+  cells.innerHTML='';
+  for(let s=0;s<startOffset;s++){const sp=document.createElement('div');sp.className='cal-cell empty';cells.appendChild(sp);}
+  for(let d=1;d<=daysInMonth;d++){
+    const cell=document.createElement('div');
+    const mm=String(calMonth+1).padStart(2,'0');
+    const dd=String(d).padStart(2,'0');
+    const slug=`${calYear}-${mm}-${dd}`;
+    const isToday=(today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d);
+    const hasChart=chartDates.has(slug);
+    const isActive=slug===activeSlug;
+    let cls='cal-cell';
+    if(hasChart) cls+=' has-chart';
+    if(isToday) cls+=' today';
+    if(isActive) cls+=' active';
+    cell.className=cls;
+    cell.textContent=d;
+    if(hasChart){cell.title=fmtSlug(slug);cell.addEventListener('click',()=>navigateTo(slug));}
+    cells.appendChild(cell);
+  }
+}
+
+const initSlug = getSlugFromURL();
+initCal(initSlug);
+renderChart(initSlug);
+renderCalendar(initSlug);
+</script>
+</body>
+</html>
